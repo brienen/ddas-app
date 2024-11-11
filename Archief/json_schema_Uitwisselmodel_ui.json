@@ -1,0 +1,15 @@
+{
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "Control",
+      "label": "Start datum",
+      "scope": "#/properties/startdatumLevering"
+    },
+    {
+      "type": "Control",
+      "label": "Eind datum",
+      "scope": "#/properties/aanleverdatumEnTijd"
+    }
+  ]
+}

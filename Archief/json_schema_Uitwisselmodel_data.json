@@ -1,0 +1,20 @@
+{
+  "leveringen": [
+    {
+      "teller": 1,
+      "aanleverende_organisatie": {
+        "(Statutaire) Naam": "Gemeente Heumen",
+        "gemeentecode": "GM0252"
+      },
+      "schuldhulptrajecten": [
+        {
+          "gemeentecode": "GM0252"
+        }
+      ]
+    }
+  ],
+  "startdatumLevering": "2024-01-01",
+  "einddatumLevering": "2024-12-31",
+  "aanleverdatumEnTijd": "2025-02-01T12:00:00.000+01:00",
+  "codeGegevensleverancier": "Handmatige Levering"
+}
