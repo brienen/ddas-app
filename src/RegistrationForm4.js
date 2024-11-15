@@ -15,21 +15,7 @@ function currentDateTime() {
   return currentDateTime;
 }
 
-// Maak een schema dat exact één levering afdwingt
-const schemaAlgemeenX = {
-  ...originalSchema,
-  properties: {
-    ...originalSchema.properties,
-    leveringen: {
-      ...originalSchema.properties.leveringen,
-      minItems: 1,
-      maxItems: 1  // Zorgt ervoor dat slechts één levering mogelijk is
-    }
-  }
-};
-
-// Extractie van $defs (gedeelde definities)
-const sharedDefs = originalSchema.$defs || originalSchema.definitions || {};
+const sharedDefs = originalSchema.$defs || originalSchema.definitions || {}; // nodig om het schema op te delen
 
 // Hoofdschema met verwijzing naar gedeelde definities
 const schemaAlgemeen = {
@@ -62,6 +48,7 @@ const schemaTrajecten = {
   ...originalSchema.properties.leveringen.items.properties.schuldhulptrajecten.items,
   $defs: sharedDefs // Voeg gedeelde definities toe
 };
+// Meerdere trajecten mogelijk - dus een array maken
 const schemaTrajectenArray = {
   type: "array",
   items: schemaTrajecten,
