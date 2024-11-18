@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { JsonForms } from '@jsonforms/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { materialRenderers, materialCells } from '@jsonforms/material-renderers';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import Ajv from 'ajv/dist/2020'; // npm install ajv & npm install ajv-formats
 import addFormats from 'ajv-formats';
+
+import { validateJSON } from './validation';
+import { downloadJSON } from './downloadJSON';
+import { SaveShortcut } from './SaveShortcut';
 
 import originalSchema from './json_schema_Uitwisselmodel.json';
 // import schemaUrl from 'https://raw.githubusercontent.com/VNG-Realisatie/ddas/refs/heads/main/v1.0/json_schema_Uitwisselmodel.json';
@@ -13,62 +17,6 @@ const validateSchema = originalSchema;
 var bestandsnaam = 'formData.json'; // als er een bestand geüpload wordt, wordt die naam gebruikt
 const startdatumLevering = '2024-01-01';
 const einddatumLevering = '2024-12-31';
-
-async function validateJSON(data, schema) {
-  const ajv = new Ajv();
-  addFormats(ajv);
-  // Compileer en valideer het schema
-  const validate = ajv.compile(schema);
-  const valid = validate(data);
-  if (!valid) {
-    console.error('Validatiefouten:', validate.errors);
-    // Vraag de gebruiker om te bevestigen of het bestand toch ingelezen of opgeslagen moet worden
-    const errors = validate.errors.map((error) => `${error.instancePath}: ${error.message}`).join('\n');
-    const userConfirmed = window.confirm(
-      `De gegevens zijn niet conform het schema:\n\n${errors}\n\nToch verder gaan?`
-    );
-    if (!userConfirmed) {
-      return false;
-    }
-  }
-  return true;
-}
-
-async function procesJson(json, setFormAlgemeen, setFormLevering, setFormTrajecten, naambestand) {
-  const isValid = await validateJSON(json, validateSchema);
-  if (!isValid) {
-    console.log('Upload bestand ' + naambestand + ' afgebroken');
-    return false;
-  }
-  bestandsnaam = naambestand;
-  setFormAlgemeen(json);
-  if (json.leveringen && json.leveringen.length > 0) setFormLevering(json.leveringen[0]);
-  if (json.leveringen && json.leveringen.length > 0 && json.leveringen[0].schuldhulptrajecten) setFormTrajecten(json.leveringen[0].schuldhulptrajecten);
-  console.log('Upload bestand ' + naambestand + ' verwerkt');
-}
-
-async function downloadJSON(data, schema) {
-  // check of object voldoet aan schema
-  const isValid = await validateJSON(data, schema);
-  if (!isValid) {
-    return false;
-  }
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  const filename = prompt('Geef een bestandsnaam op:', bestandsnaam);
-  if (filename === null || filename.trim() === '') {
-    console.log('Bestandsopslag geannuleerd door de gebruiker.');
-    return; // Stop met de functie als de gebruiker annuleert
-  }
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(url);
-}
 
 // Extractie van $defs (gedeelde definities) - nodig om schema op te delen
 const sharedDefs = originalSchema.$defs || originalSchema.definitions || {};
@@ -199,6 +147,19 @@ const uischemaTrajecten = {
   ]
 };
 
+async function uploadJson(json, setFormAlgemeen, setFormLevering, setFormTrajecten, naambestand) {
+  const isValid = await validateJSON(json, validateSchema);
+  if (!isValid) {
+    console.log('Upload bestand ' + naambestand + ' afgebroken');
+    return false;
+  }
+  bestandsnaam = naambestand;
+  setFormAlgemeen(json);
+  if (json.leveringen && json.leveringen.length > 0) setFormLevering(json.leveringen[0]);
+  if (json.leveringen && json.leveringen.length > 0 && json.leveringen[0].schuldhulptrajecten) setFormTrajecten(json.leveringen[0].schuldhulptrajecten);
+  console.log('Upload bestand ' + naambestand + ' verwerkt');
+}
+
 function RegistrationForm() {
 
   const [formAlgemeen, setFormAlgemeen] = useState(initialFormData);
@@ -223,11 +184,8 @@ function RegistrationForm() {
     formAlgemeen.leveringen = [];
     formLevering.schuldhulptrajecten = formTrajecten;
     formAlgemeen.leveringen.push(formLevering);
-    // Vul aanleverdatumEnTijd in
-    const nu = new Date();
-    formAlgemeen["aanleverdatumEnTijd"] = nu.getFullYear() + "-" + (nu.getMonth() + 1).toString() + "-" + nu.getDate() + "T" + (nu.getHours().toString().length < 2 ? "0" + nu.getHours() : nu.getHours()) + ":" + (nu.getMinutes().toString().length < 2 ? "0" + nu.getMinutes() : nu.getMinutes()) + ":00.000+01:00";
     // Valideren en Download in een functie, om validatie makkelijker te maken
-    downloadJSON(formAlgemeen, validateSchema);
+    downloadJSON(formAlgemeen, validateSchema, bestandsnaam);
   };
 
   const handleFileUpload = (event) => {
@@ -237,7 +195,7 @@ function RegistrationForm() {
       reader.onload = (e) => {
         try {
           const json = JSON.parse(e.target.result);
-          procesJson(json, setFormAlgemeen, setFormLevering, setFormTrajecten, reader.fileName)
+          uploadJson(json, setFormAlgemeen, setFormLevering, setFormTrajecten, reader.fileName);
         } catch (error) {
           console.error("Error parsing JSON file", error);
           alert("Ongeldig JSON-bestand.");
@@ -359,6 +317,8 @@ function RegistrationForm() {
           </div>
         </Tab>
       </Tabs>
+
+      <SaveShortcut data={formAlgemeen} schema={validateSchema} bestandsnaam={bestandsnaam} />
 
       <div className="mt-4 p-3 bg-light border rounded">
         <h5>Debug: Ingevoerde gegevens:</h5>
