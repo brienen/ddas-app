@@ -318,7 +318,7 @@ function RegistrationForm() {
         </Tab>
       </Tabs>
 
-      <SaveShortcut data={formAlgemeen} schema={validateSchema} bestandsnaam={bestandsnaam} />
+      <SaveShortcut data={formAlgemeen} formLevering={formLevering} formTrajecten={formTrajecten} schema={validateSchema} bestandsnaam={bestandsnaam} />
 
       <div className="mt-4 p-3 bg-light border rounded">
         <h5>Debug: Ingevoerde gegevens:</h5>

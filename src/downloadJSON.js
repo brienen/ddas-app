@@ -7,6 +7,7 @@ export async function downloadJSON(data, schema, bestandsnaam) {
   // check of object voldoet aan schema
   const isValid = await validateJSON(data, schema);
   if (!isValid) {
+    console.log("validatie fout & gebruiker wil niet verder");
     return false;
   }
   const json = JSON.stringify(data, null, 2);
