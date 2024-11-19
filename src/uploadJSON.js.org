@@ -1,0 +1,14 @@
+import { validateJSON } from './validation';
+
+async function uploadJson(json, setFormAlgemeen, setFormLevering, setFormTrajecten, naambestand) {
+  const isValid = await validateJSON(json, validateSchemaschema);
+  if (!isValid) {
+    console.log('Upload bestand ' + naambestand + ' afgebroken');
+    return false;
+  }
+  let bestandsnaam = naambestand;
+  setFormAlgemeen(json);
+  if (json.leveringen && json.leveringen.length > 0) setFormLevering(json.leveringen[0]);
+  if (json.leveringen && json.leveringen.length > 0 && json.leveringen[0].schuldhulptrajecten) setFormTrajecten(json.leveringen[0].schuldhulptrajecten);
+  console.log('Upload bestand ' + naambestand + ' verwerkt');
+}

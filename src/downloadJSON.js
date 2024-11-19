@@ -1,13 +1,29 @@
 import { validateJSON } from './validation';
 
-export async function downloadJSON(data, schema, bestandsnaam) {
+async function generateFilename(data) {
+  // Controleer of de vereiste gegevens aanwezig zijn
+  const organisatieNaam =
+    data?.leveringen?.[0]?.aanleverende_organisatie?.['(Statutaire) Naam'];
+
+  if (!organisatieNaam) {
+    console.warn('Organisatienaam niet gevonden. Bestandsnaam wordt standaard ingesteld.');
+    return 'SHV_2024_organisatienaam.json';
+  }
+
+  // Vervang spaties door liggende streepjes
+  const sanitizedOrganisatieNaam = organisatieNaam.replace(/ /g, '_');
+
+  // Stel de bestandsnaam samen
+  return `SHV_2024_${sanitizedOrganisatieNaam}.json`;
+}
+
+export async function downloadJSON(data, schema) {
   // Vul aanleverdatumEnTijd in
   const nu = new Date();
-  data["aanleverdatumEnTijd"] = nu.getFullYear() + "-" + (nu.getMonth() + 1).toString() + "-" + nu.getDate() + "T" + (nu.getHours().toString().length < 2 ? "0" + nu.getHours() : nu.getHours()) + ":" + (nu.getMinutes().toString().length < 2 ? "0" + nu.getMinutes() : nu.getMinutes()) + ":00.000+01:00";
+  data['aanleverdatumEnTijd'] = nu.getFullYear() + '-' + (nu.getMonth() + 1).toString() + '-' + nu.getDate() + 'T' + (nu.getHours().toString().length < 2 ? '0' + nu.getHours() : nu.getHours()) + ':' + (nu.getMinutes().toString().length < 2 ? '0' + nu.getMinutes() : nu.getMinutes()) + ':00.000+01:00';
   // check of object voldoet aan schema
   const isValid = await validateJSON(data, schema);
   if (!isValid) {
-    console.log("validatie fout & gebruiker wil niet verder");
     return false;
   }
   const json = JSON.stringify(data, null, 2);
@@ -15,9 +31,9 @@ export async function downloadJSON(data, schema, bestandsnaam) {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
+  let bestandsnaam = await generateFilename(data);
   const filename = prompt('Geef een bestandsnaam op:', bestandsnaam);
   if (filename === null || filename.trim() === '') {
-    console.log('Bestandsopslag geannuleerd door de gebruiker.');
     return; // Stop met de functie als de gebruiker annuleert
   }
   link.download = filename;

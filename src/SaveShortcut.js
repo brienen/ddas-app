@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { downloadJSON } from './downloadJSON';
 
-export function SaveShortcut({ data, schema, formLevering, formTrajecten, bestandsnaam }) {
+export function SaveShortcut({ data, schema, formLevering, formTrajecten }) {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -10,7 +10,7 @@ export function SaveShortcut({ data, schema, formLevering, formTrajecten, bestan
         data.leveringen = [];
         formLevering.schuldhulptrajecten = formTrajecten;
         data.leveringen.push(formLevering);
-        downloadJSON(data, schema, bestandsnaam);
+        downloadJSON(data, schema);
       }
     };
 
@@ -21,7 +21,7 @@ export function SaveShortcut({ data, schema, formLevering, formTrajecten, bestan
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [data, schema, formLevering, formTrajecten, bestandsnaam]);
+  }, [data, schema, formLevering, formTrajecten]);
 
   return null;
 }
