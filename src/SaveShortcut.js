@@ -1,16 +1,12 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { downloadJSON } from './downloadJSON';
 
-export function SaveShortcut({ data, schema, formLevering, formTrajecten }) {
+export function SaveShortcut({ data, formLevering, formTrajecten, schema }) {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
         event.preventDefault(); // Voorkom standaard opslaan
-        // Alles in formAlgemeen stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
-        data.leveringen = [];
-        formLevering.schuldhulptrajecten = formTrajecten;
-        data.leveringen.push(formLevering);
-        downloadJSON(data, schema);
+        downloadJSON(data, formLevering, formTrajecten, schema);
       }
     };
 

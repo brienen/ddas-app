@@ -1,6 +1,6 @@
 import { validateJSON } from './validation';
 
-async function generateFilename(data) {
+async function generateFilename(data, formLevering, formTrajecten) {
   // Controleer of de vereiste gegevens aanwezig zijn
   const organisatieNaam =
     data?.leveringen?.[0]?.aanleverende_organisatie?.['(Statutaire) Naam'];
@@ -17,7 +17,11 @@ async function generateFilename(data) {
   return `SHV_2024_${sanitizedOrganisatieNaam}.json`;
 }
 
-export async function downloadJSON(data, schema) {
+export async function downloadJSON(data, formLevering, formTrajecten, schema) {
+  // Alles in formAlgemeen stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
+  data.leveringen = [];
+  formLevering.schuldhulptrajecten = formTrajecten;
+  data.leveringen.push(formLevering);
   // Vul aanleverdatumEnTijd in
   const nu = new Date();
   data['aanleverdatumEnTijd'] = nu.getFullYear() + '-' + (nu.getMonth() + 1).toString() + '-' + nu.getDate() + 'T' + (nu.getHours().toString().length < 2 ? '0' + nu.getHours() : nu.getHours()) + ':' + (nu.getMinutes().toString().length < 2 ? '0' + nu.getMinutes() : nu.getMinutes()) + ':00.000+01:00';
