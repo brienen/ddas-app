@@ -3,19 +3,17 @@ import { JsonForms, withJsonFormsLayoutProps } from '@jsonforms/react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const CollapsibleGroupRenderer = React.memo(({ uischema, schema, path, renderers }) => {
+const CollapsibleGroupRenderer = ({ uischema, schema, path, renderers, data, onChange, handleChange }) => {
+  console.log('Props in CollapsibleGroupRenderer:', { uischema, schema, data, path, renderers, onChange, handleChange });
 
   const [expanded, setExpanded] = useState(false);
 
-  const handleChange = useCallback(() => {
+  const handleAccordionChange = useCallback(() => {
     setExpanded((prevExpanded) => !prevExpanded);
   }, []);
-  console.log('UISchema: ', uischema);
-  console.log('Schema: ', schema);
-  console.log('Defs: ', schema.$defs);
-  console.log('Path: ', path);
+
   return (
-    <Accordion expanded={expanded} onChange={handleChange}>
+    <Accordion expanded={expanded} onChange={handleAccordionChange}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="subtitle1">{uischema.label || 'Groep'}</Typography>
       </AccordionSummary>
@@ -25,16 +23,27 @@ const CollapsibleGroupRenderer = React.memo(({ uischema, schema, path, renderers
             key={index}
             schema={{
               ...schema,
-              $defs: schema.$defs || {}
+              $defs: schema.$defs, // Zorg dat gedeelde definities beschikbaar zijn
             }}
             uischema={element}
             path={path}
-            renderers={renderers} // Combineer standaard en custom renderers
+            renderers={renderers}
+            data={data}
+            onChange={({ data: updatedData }) => {
+              if (onChange) {
+                onChange(updatedData);
+              } else if (handleChange) {
+                console.warn('onChange is niet gedefinieerd.');
+                handleChange(path, updatedData);
+              } else {
+                console.warn('handleChange is niet gedefinieerd');
+              }
+            }}
           />
         ))}
       </AccordionDetails>
     </Accordion>
   );
-});
+};
 
 export default withJsonFormsLayoutProps(CollapsibleGroupRenderer);

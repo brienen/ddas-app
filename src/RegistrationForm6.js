@@ -300,18 +300,32 @@ function RegistrationForm() {
           <div className="p-3 border rounded bg-light">
             <h5>Schuldhulptrajecten</h5>
             <p>Vul de gegevens in met betrekking tot schuldhulptrajecten die binnen deze levering vallen.</p>
+            {console.log('Props die naar JsonForms gaan:', {
+  schema: schemaTrajecten,
+  uischema: uischemaTrajecten,
+  data: formTrajecten[currentTrajectIndex],
+  path: '',
+  renderers: customRenderers,
+  cells: materialCells,
+  onChange: ({ data: updatedData }) => {
+    const updatedTrajecten = [...formTrajecten];
+    updatedTrajecten[currentTrajectIndex] = updatedData;
+    setFormTrajecten(updatedTrajecten);
+  },
+})}
             <JsonForms
               schema={schemaTrajecten}
               uischema={uischemaTrajecten}
               data={formTrajecten[currentTrajectIndex]}
-              renderers={customRenderers}
+              renderers={materialRenderers}
               cells={materialCells}
-              onChange={({ data, errors }) => {
+              onChange={({ data: updatedData }) => {
                 const updatedTrajecten = [...formTrajecten];
-                updatedTrajecten[currentTrajectIndex] = data;
+                updatedTrajecten[currentTrajectIndex] = updatedData;
                 setFormTrajecten(updatedTrajecten);
               }}
             />
+
             <div className="d-flex justify-content-between mt-3">
               <button
                 onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
