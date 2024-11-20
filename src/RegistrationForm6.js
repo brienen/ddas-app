@@ -69,11 +69,6 @@ const schemaTrajecten = addDefsToNestedProperties(
   originalSchema.properties.leveringen.items.properties.schuldhulptrajecten.items,
   sharedDefs
 );
-const schemaTrajectenArray = {
-  type: "array",
-  items: schemaTrajecten,
-  $defs: schemaTrajecten.$defs
-};
 
 // Voorgevuld formData met één lege levering en nieuwe velden
 const initialFormData = {
@@ -273,7 +268,7 @@ function RegistrationForm() {
               schema={schemaAlgemeen}
               uischema={uischemaAlgemeen}
               data={formAlgemeen}
-              renderers={customRenderers}
+              renderers={materialRenderers}
               cells={materialCells}
               onChange={({ data, errors }) => setFormAlgemeen(data)}
             />
@@ -281,7 +276,7 @@ function RegistrationForm() {
               schema={schemaLevering}
               uischema={uischemaLevering}
               data={formLevering}
-              renderers={customRenderers}
+              renderers={materialRenderers}
               cells={materialCells}
               onChange={({ data, errors }) => setFormLevering(data)}
             />
@@ -300,6 +295,23 @@ function RegistrationForm() {
           <div className="p-3 border rounded bg-light">
             <h5>Schuldhulptrajecten</h5>
             <p>Vul de gegevens in met betrekking tot schuldhulptrajecten die binnen deze levering vallen.</p>
+            <div className="d-flex justify-content-between mt-3">
+              <button
+                onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
+                disabled={currentTrajectIndex === 0}
+              >
+                Vorig Traject ({currentTrajectIndex})
+              </button>
+              dit is traject {currentTrajectIndex + 1} van de {formTrajecten.length} trajecten
+              <button
+                onClick={() =>
+                  setCurrentTrajectIndex(currentTrajectIndex + 1)
+                }
+              >
+                {(currentTrajectIndex < formTrajecten.length - 1 ? 'Volgend Traject' : 'Nieuw Traject')} ({currentTrajectIndex + 2})
+              </button>
+            </div>
+            <hr />
             {console.log('Props die naar JsonForms gaan:', {
   schema: schemaTrajecten,
   uischema: uischemaTrajecten,
@@ -342,6 +354,8 @@ function RegistrationForm() {
                 {(currentTrajectIndex < formTrajecten.length - 1 ? 'Volgend Traject' : 'Nieuw Traject')} ({currentTrajectIndex + 2})
               </button>
             </div>
+
+            <hr />
 
             <div className="d-flex justify-content-between mt-3">
               <Button variant="primary" onClick={goToPreviousTab}>
