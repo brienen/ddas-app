@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { JsonForms } from '@jsonforms/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import { materialRenderers, materialCells } from '@jsonforms/material-renderers';
 import { rankWith, uiTypeIs } from '@jsonforms/core';
 
-import CollapsibleGroupRenderer from './CollapsibleGroupRenderer';
 import { validateJSON } from './validation';
 import { downloadJSON } from './downloadJSON';
 import { SaveShortcut } from './SaveShortcut';
@@ -16,12 +15,6 @@ import originalSchema from './json_schema_Uitwisselmodel.json';
 const validateSchema = originalSchema;
 const startdatumLevering = '2024-01-01';
 const einddatumLevering = '2024-12-31';
-
-const collapsibleGroupTester = rankWith(3, uiTypeIs('Group'));
-const customRenderers = [
-  ...materialRenderers,
-  { tester: collapsibleGroupTester, renderer: CollapsibleGroupRenderer }
-];
 
 // het schema wordt opgedeeld, maar de $defs moeten overal meegenomen worden - daarbij helpt deze functie
 function addDefsToNestedProperties(schema, defs) {
@@ -176,7 +169,6 @@ async function uploadJson(json, setFormAlgemeen, setFormLevering, setFormTraject
 }
 
 function RegistrationForm() {
-
   const [formAlgemeen, setFormAlgemeen] = useState(initialFormData);
   const [formLevering, setFormLevering] = useState(
     initialFormData.leveringen && initialFormData.leveringen.length > 0
@@ -233,154 +225,182 @@ function RegistrationForm() {
     }
   };
 
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    // Maak alle elementen met de class 'MuiCardContent-root' binnen de container onzichtbaar
+    const contentElements = container.querySelectorAll(".MuiCardContent-root");
+    contentElements.forEach((element) => {
+      element.style.display = "none";
+    });
+
+    // Voeg event listeners toe aan de header-elementen
+    const headerElements = container.querySelectorAll(".MuiCardHeader-title");
+    const handleClick = (event) => {
+      const header = event.target;
+      console.log("geklikt op: " + header.textContent);
+      const parent = header.parentElement.parentElement.parentElement; // eerst 3 niveaus omhoog
+      const content = parent.querySelector(".MuiCardContent-root"); // dan naar groep
+      if (content) {
+        console.log("Display: " + content.style.display);
+        content.style.display = content.style.display === "none" ? "block" : "none";
+      } else {
+        console.log("MuiCardContent niet gevonden...");
+      }
+    };
+    headerElements.forEach((header) => {
+      header.addEventListener("click", handleClick);
+    });
+
+    // Cleanup: Verwijder event listeners bij unmounting
+    return () => {
+      headerElements.forEach((header) => {
+        header.removeEventListener("click", handleClick);
+      });
+    };
+  }, []); // Lege afhankelijkhedenlijst: wordt alleen uitgevoerd bij de eerste render
+
   return (
     <div className="container mt-4">
       <h2 className="mb-4">DDAS-Invoerapp</h2>
 
-      <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
+      <div ref={containerRef}>
+        <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
 
-        <Tab eventKey="start" title="Start">
-          <div className="p-3 border rounded bg-light">
-          <h5>Welkom bij de DDAS-Importapp</h5>
-          <p>Met deze app is het mogelijk om op een laagdrempelige manier Schuldhulpinformatie conform de DDAS-uitwisselspecificatie op te stellen.</p>
-          <p/>
-          <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in stand van zaken rond schuldhulpverlening.</p>
-          <p/>
-          <p>Deze app kent naast het huidige tabblad 2 tabbladen waar de benodigde gegevens ingevuld moeten worden en het laatste tabblad geeft de mogelijkheid de voor DDAS bendoideg JSON te downloaden. Dit gedownloade bestand kunt u vervolgens bij het CBS-portaal uploaden.</p>
-          <p>Mocht er al een JSON-bestand beschikbaar zijn dan kun je dat via onderstaande knop inladen.</p>
-          <input type="file" accept="application/json" onChange={handleFileUpload} className="mt-3" />
-          <br/>
-          <br/>
-          <p>Druk op volgende om te starten met het invullen van de benodigde informatie.</p>
-            <div className="d-flex justify-content-between mt-3">
-              <Button variant="primary" onClick={goToNextTab}>
-                Volgende
-              </Button>
+          <Tab eventKey="start" title="Start">
+            <div className="p-3 border rounded bg-light">
+            <h5>Welkom bij de DDAS-Importapp</h5>
+            <p>Met deze app is het mogelijk om op een laagdrempelige manier Schuldhulpinformatie conform de DDAS-uitwisselspecificatie op te stellen.</p>
+            <p/>
+            <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in stand van zaken rond schuldhulpverlening.</p>
+            <p/>
+            <p>Deze app kent naast het huidige tabblad 2 tabbladen waar de benodigde gegevens ingevuld moeten worden en het laatste tabblad geeft de mogelijkheid de voor DDAS bendoideg JSON te downloaden. Dit gedownloade bestand kunt u vervolgens bij het CBS-portaal uploaden.</p>
+            <p>Mocht er al een JSON-bestand beschikbaar zijn dan kun je dat via onderstaande knop inladen.</p>
+            <input type="file" accept="application/json" onChange={handleFileUpload} className="mt-3" />
+            <br/>
+            <br/>
+            <p>Druk op volgende om te starten met het invullen van de benodigde informatie.</p>
+              <div className="d-flex justify-content-between mt-3">
+                <Button variant="primary" onClick={goToNextTab}>
+                  Volgende
+                </Button>
+              </div>
             </div>
-          </div>
-        </Tab>
+          </Tab>
 
-        <Tab eventKey="general" title="Algemene Gegevens">
-          <div className="p-3 border rounded bg-light">
-            <h5>Algemene Gegevens</h5>
-            <p>Vul de informatie in met betrekking tot de levering en de betrokken organisatie.</p>
-            <JsonForms
-              schema={schemaAlgemeen}
-              uischema={uischemaAlgemeen}
-              data={formAlgemeen}
-              renderers={materialRenderers}
-              cells={materialCells}
-              onChange={({ data, errors }) => setFormAlgemeen(data)}
-            />
-            <JsonForms
-              schema={schemaLevering}
-              uischema={uischemaLevering}
-              data={formLevering}
-              renderers={materialRenderers}
-              cells={materialCells}
-              onChange={({ data, errors }) => setFormLevering(data)}
-            />
-            <div className="d-flex justify-content-between mt-3">
-              <Button variant="primary" onClick={goToPreviousTab}>
-                Vorige
-              </Button>
-              <Button variant="primary" onClick={goToNextTab}>
-                Volgende
-              </Button>
+          <Tab eventKey="general" title="Algemene Gegevens">
+            <div className="p-3 border rounded bg-light">
+              <h5>Algemene Gegevens</h5>
+              <p>Vul de informatie in met betrekking tot de levering en de betrokken organisatie.</p>
+              <JsonForms
+                schema={schemaAlgemeen}
+                uischema={uischemaAlgemeen}
+                data={formAlgemeen}
+                renderers={materialRenderers}
+                cells={materialCells}
+                onChange={({ data, errors }) => setFormAlgemeen(data)}
+              />
+              <JsonForms
+                schema={schemaLevering}
+                uischema={uischemaLevering}
+                data={formLevering}
+                renderers={materialRenderers}
+                cells={materialCells}
+                onChange={({ data, errors }) => setFormLevering(data)}
+              />
+              <div className="d-flex justify-content-between mt-3">
+                <Button variant="primary" onClick={goToPreviousTab}>
+                  Vorige
+                </Button>
+                <Button variant="primary" onClick={goToNextTab}>
+                  Volgende
+                </Button>
+              </div>
             </div>
-          </div>
-        </Tab>
+          </Tab>
 
-        <Tab eventKey="schuldhulptrajecten" title="Schuldhulptrajecten">
-          <div className="p-3 border rounded bg-light">
-            <h5>Schuldhulptrajecten</h5>
-            <p>Vul de gegevens in met betrekking tot schuldhulptrajecten die binnen deze levering vallen.</p>
-            <div className="d-flex justify-content-between mt-3">
-              <button
-                onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
-                disabled={currentTrajectIndex === 0}
-              >
-                Vorig Traject ({currentTrajectIndex})
-              </button>
-              dit is traject {currentTrajectIndex + 1} van de {formTrajecten.length} trajecten
-              <button
-                onClick={() =>
-                  setCurrentTrajectIndex(currentTrajectIndex + 1)
-                }
-              >
-                {(currentTrajectIndex < formTrajecten.length - 1 ? 'Volgend Traject' : 'Nieuw Traject')} ({currentTrajectIndex + 2})
-              </button>
+          <Tab eventKey="schuldhulptrajecten" title="Schuldhulptrajecten">
+            <div className="p-3 border rounded bg-light">
+              <h5>Schuldhulptrajecten</h5>
+              <p>Vul de gegevens in met betrekking tot schuldhulptrajecten die binnen deze levering vallen.</p>
+              <div className="d-flex justify-content-between mt-3">
+                <button
+                  onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
+                  disabled={currentTrajectIndex === 0}
+                >
+                  Vorig Traject ({currentTrajectIndex})
+                </button>
+                dit is traject {currentTrajectIndex + 1} van de {formTrajecten.length} trajecten
+                <button
+                  onClick={() =>
+                    setCurrentTrajectIndex(currentTrajectIndex + 1)
+                  }
+                >
+                  {(currentTrajectIndex < formTrajecten.length - 1 ? 'Volgend Traject' : 'Nieuw Traject')} ({currentTrajectIndex + 2})
+                </button>
+              </div>
+              <hr />
+              <div>
+                <JsonForms
+                  schema={schemaTrajecten}
+                  uischema={uischemaTrajecten}
+                  data={formTrajecten[currentTrajectIndex]}
+                  renderers={materialRenderers}
+                  cells={materialCells}
+                  onChange={({ data: updatedData }) => {
+                    const updatedTrajecten = [...formTrajecten];
+                    updatedTrajecten[currentTrajectIndex] = updatedData;
+                    setFormTrajecten(updatedTrajecten);
+                  }}
+                />
+              </div>
+
+              <div className="d-flex justify-content-between mt-3">
+                <button
+                  onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
+                  disabled={currentTrajectIndex === 0}
+                >
+                  Vorig Traject ({currentTrajectIndex})
+                </button>
+                dit is traject {currentTrajectIndex + 1} van de {formTrajecten.length} trajecten
+                <button
+                  onClick={() =>
+                    setCurrentTrajectIndex(currentTrajectIndex + 1)
+                  }
+                >
+                  {(currentTrajectIndex < formTrajecten.length - 1 ? 'Volgend Traject' : 'Nieuw Traject')} ({currentTrajectIndex + 2})
+                </button>
+              </div>
+
+              <hr />
+
+              <div className="d-flex justify-content-between mt-3">
+                <Button variant="primary" onClick={goToPreviousTab}>
+                  Vorige
+                </Button>
+                <Button variant="primary" onClick={goToNextTab}>
+                  Volgende
+                </Button>
+              </div>
             </div>
-            <hr />
-            {console.log('Props die naar JsonForms gaan:', {
-  schema: schemaTrajecten,
-  uischema: uischemaTrajecten,
-  data: formTrajecten[currentTrajectIndex],
-  path: '',
-  renderers: customRenderers,
-  cells: materialCells,
-  onChange: ({ data: updatedData }) => {
-    const updatedTrajecten = [...formTrajecten];
-    updatedTrajecten[currentTrajectIndex] = updatedData;
-    setFormTrajecten(updatedTrajecten);
-  },
-})}
-            <JsonForms
-              schema={schemaTrajecten}
-              uischema={uischemaTrajecten}
-              data={formTrajecten[currentTrajectIndex]}
-              renderers={materialRenderers}
-              cells={materialCells}
-              onChange={({ data: updatedData }) => {
-                const updatedTrajecten = [...formTrajecten];
-                updatedTrajecten[currentTrajectIndex] = updatedData;
-                setFormTrajecten(updatedTrajecten);
-              }}
-            />
+          </Tab>
 
-            <div className="d-flex justify-content-between mt-3">
-              <button
-                onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
-                disabled={currentTrajectIndex === 0}
-              >
-                Vorig Traject ({currentTrajectIndex})
-              </button>
-              dit is traject {currentTrajectIndex + 1} van de {formTrajecten.length} trajecten
-              <button
-                onClick={() =>
-                  setCurrentTrajectIndex(currentTrajectIndex + 1)
-                }
-              >
-                {(currentTrajectIndex < formTrajecten.length - 1 ? 'Volgend Traject' : 'Nieuw Traject')} ({currentTrajectIndex + 2})
-              </button>
+          <Tab eventKey="export" title="Exporteren">
+            <div className="p-3 border rounded bg-light">
+              <h5>Exporteer Gegevens</h5>
+              <p>Klik op de knop hieronder om de ingevulde gegevens als JSON-bestand te downloaden.</p>
+              <Button variant="primary" onClick={handleDownload}>Download JSON Data</Button>
+              <div className="d-flex justify-content-between mt-3">
+                <Button variant="primary" onClick={goToPreviousTab}>
+                  Vorige
+                </Button>
+              </div>
             </div>
-
-            <hr />
-
-            <div className="d-flex justify-content-between mt-3">
-              <Button variant="primary" onClick={goToPreviousTab}>
-                Vorige
-              </Button>
-              <Button variant="primary" onClick={goToNextTab}>
-                Volgende
-              </Button>
-            </div>
-          </div>
-        </Tab>
-
-        <Tab eventKey="export" title="Exporteren">
-          <div className="p-3 border rounded bg-light">
-            <h5>Exporteer Gegevens</h5>
-            <p>Klik op de knop hieronder om de ingevulde gegevens als JSON-bestand te downloaden.</p>
-            <Button variant="primary" onClick={handleDownload}>Download JSON Data</Button>
-            <div className="d-flex justify-content-between mt-3">
-              <Button variant="primary" onClick={goToPreviousTab}>
-                Vorige
-              </Button>
-            </div>
-          </div>
-        </Tab>
-      </Tabs>
+          </Tab>
+        </Tabs>
+      </div>
 
       <SaveShortcut data={formAlgemeen} formLevering={formLevering} formTrajecten={formTrajecten} schema={validateSchema} />
 
@@ -398,6 +418,9 @@ function RegistrationForm() {
     </div>
   );
 
+  <script>
+    GroepInklappen();
+  </script>
 }
 
 export default RegistrationForm;
