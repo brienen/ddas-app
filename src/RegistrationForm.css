@@ -1,0 +1,20 @@
+.MuiCardHeader-title {
+  position: relative; /* Zorg ervoor dat het pseudo-element zich goed positioneert */
+  padding-left: 20px; /* Voeg ruimte toe voor het pijltje/plusteken */
+  cursor: pointer; /* Geef een aanwijzer-cursor om te tonen dat het klikbaar is */
+}
+
+.MuiCardHeader-title::before {
+  content: "▶"; /* Vervang dit met bijvoorbeeld "▼" voor een pijltje */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%); /* Verticaal centreren */
+  font-size: 14px; /* Pas de grootte aan als nodig */
+  color: #333; /* Kleur van het teken */
+  transition: transform 0.3s; /* Optionele animatie bij toggle */
+}
+
+.MuiCardHeader-title.open::before {
+  content: "▲"; /* Verander naar een ander symbool, bijvoorbeeld "-" of "▲" */
+}
