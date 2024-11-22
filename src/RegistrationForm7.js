@@ -418,10 +418,6 @@ function RegistrationForm() {
       </div>
     </div>
   );
-
-  <script>
-    GroepInklappen();
-  </script>
 }
 
 export default RegistrationForm;
