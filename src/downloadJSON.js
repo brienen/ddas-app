@@ -24,7 +24,9 @@ export async function downloadJSON(data, formLevering, formTrajecten, schema) {
   data.leveringen.push(formLevering);
   // Vul aanleverdatumEnTijd in
   const nu = new Date();
-  data['aanleverdatumEnTijd'] = nu.getFullYear() + '-' + (nu.getMonth() + 1).toString() + '-' + nu.getDate() + 'T' + (nu.getHours().toString().length < 2 ? '0' + nu.getHours() : nu.getHours()) + ':' + (nu.getMinutes().toString().length < 2 ? '0' + nu.getMinutes() : nu.getMinutes()) + ':00.000+01:00';
+  const maand = nu.getMonth() + 1;
+  // console.log('datum-tijd wordt ingevulde met: ' + nu.getFullYear() + '-' + (maand.toString().length < 2 ? '0' + maand : maand) + '-' + (nu.getDate().toString().length < 2 ? '0' + nu.getDate() : nu.getDate()) + 'T' + (nu.getHours().toString().length < 2 ? '0' + nu.getHours() : nu.getHours()) + ':' + (nu.getMinutes().toString().length < 2 ? '0' + nu.getMinutes() : nu.getMinutes()) + ':00.000+01:00');
+  data.aanleverdatumEnTijd = nu.getFullYear() + '-' + (maand.toString().length < 2 ? '0' + maand : maand) + '-' + (nu.getDate().toString().length < 2 ? '0' + nu.getDate() : nu.getDate()) + 'T' + (nu.getHours().toString().length < 2 ? '0' + nu.getHours() : nu.getHours()) + ':' + (nu.getMinutes().toString().length < 2 ? '0' + nu.getMinutes() : nu.getMinutes()) + ':00.000+01:00';
   // check of object voldoet aan schema
   const isValid = await validateJSON(data, schema);
   if (!isValid) {
