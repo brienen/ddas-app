@@ -2,10 +2,12 @@
   position: relative; /* Zorg ervoor dat het pseudo-element zich goed positioneert */
   padding-left: 20px; /* Voeg ruimte toe voor het pijltje/plusteken */
   cursor: pointer; /* Geef een aanwijzer-cursor om te tonen dat het klikbaar is */
+  font-size: 1.25rem; /* Wordt jammergenoeg overschreven door .css-16xl4zq-MuiTypography-root */
 }
 
 .MuiCardHeader-title::before {
-  content: "▶"; /* Vervang dit met bijvoorbeeld "▼" voor een pijltje */
+  font-family: "Material Symbols Outlined";
+  content: "\e313"; /* keyboard_arrow_down - NB: moet in aanroep Google Symbols in index.html zitten! */
   position: absolute;
   left: 0;
   top: 50%;
@@ -16,5 +18,10 @@
 }
 
 .MuiCardHeader-title.open::before {
-  content: "▲"; /* Verander naar een ander symbool, bijvoorbeeld "-" of "▲" */
+  font-family: "Material Symbols Outlined";
+  content: "\eae6"; /*keyboard_control_key - NB: moet in aanroep Google Symbols in index.html zitten! */
+}
+
+h5 {
+  font-size: 1.35rem;
 }
