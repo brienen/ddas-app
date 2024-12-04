@@ -17,6 +17,43 @@ async function generateFilename(data, formLevering, formTrajecten) {
   return `SHV_2024_${sanitizedOrganisatieNaam}.json`;
 }
 
+async function saveFileWithFallback(data, filename) {
+  if ('showSaveFilePicker' in window) {
+    console.log('showSaveFilePicker beschikbaar! Save As dialoog wordt aangeboden.');
+    try {
+      const options = {
+        types: [
+          {
+            description: 'JSON bestanden',
+            accept: { 'application/json': ['.json'] },
+          },
+        ],
+        suggestedName: filename,
+      };
+      const handle = await window.showSaveFilePicker(options);
+      const writable = await handle.createWritable();
+      await writable.write(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      await writable.close();
+    } catch (error) {
+      console.error('Opslaan geannuleerd of fout:', error);
+    }
+  } else {
+    // Fallback: Gebruik standaard downloadgedrag
+    console.warn('File System Access API niet beschikbaar. Gebruik standaard download.');
+    filename = prompt('LET OP!\n\nUw browser ondersteunt geen locatiekeuze voor bestanden. Het bestand wordt opgeslagen in de standaard "Downloads" map.\n\nGeef een bestandsnaam op:', filename);
+    if (filename === null || filename.trim() === '') {
+      console.warn('Gebruiker heeft opslaan afgebroken.');
+      return; // Stop met de functie als de gebruiker annuleert
+    }
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(data);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+
 export async function downloadJSON(data, formLevering, formTrajecten, schema) {
   // Alles in formAlgemeen stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
   data.leveringen = [];
@@ -34,17 +71,6 @@ export async function downloadJSON(data, formLevering, formTrajecten, schema) {
   }
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
   let bestandsnaam = await generateFilename(data);
-  const filename = prompt('Geef een bestandsnaam op:', bestandsnaam);
-  if (filename === null || filename.trim() === '') {
-    return; // Stop met de functie als de gebruiker annuleert
-  }
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(url);
+  saveFileWithFallback(blob, bestandsnaam);
 }
