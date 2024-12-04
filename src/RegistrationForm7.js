@@ -230,6 +230,16 @@ function RegistrationForm() {
   useEffect(() => {
     const container = containerRef.current;
 
+    // Geef alle elementen met de class '.css-1vpwcmr-MuiGrid-root>.MuiGrid-item' (inputvelden) wat meer ruimte
+    const contentInputvelden = container.querySelectorAll(".MuiGrid-item");
+    contentInputvelden.forEach((element) => {
+      element.style.marginBottom = "5px";
+    });
+    // Maak alle elementen met de class 'css-16xl4zq-MuiTypography-root' (label van groep) binnen de container kleiner maken
+    const contentGroupLabels = container.querySelectorAll(".MuiTypography-h5");
+    contentGroupLabels.forEach((element) => {
+      element.style.fontSize = "1.3rem";
+    });
     // Maak alle elementen met de class 'MuiCardContent-root' binnen de container onzichtbaar
     const contentElements = container.querySelectorAll(".MuiCardContent-root");
     contentElements.forEach((element) => {
@@ -272,13 +282,13 @@ function RegistrationForm() {
 
           <Tab eventKey="start" title="Start">
             <div className="p-3 border rounded bg-light">
-            <h5>Welkom bij de DDAS-Importapp</h5>
+            <h5>Welkom bij de DDAS-Invoerapp</h5>
             <p>Met deze app is het mogelijk om op een laagdrempelige manier Schuldhulpinformatie conform de DDAS-uitwisselspecificatie op te stellen.</p>
             <p/>
             <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in stand van zaken rond schuldhulpverlening.</p>
             <p/>
-            <p>Deze app kent naast het huidige tabblad 2 tabbladen waar de benodigde gegevens ingevuld moeten worden en het laatste tabblad geeft de mogelijkheid de voor DDAS bendoideg JSON te downloaden. Dit gedownloade bestand kunt u vervolgens bij het CBS-portaal uploaden.</p>
-            <p>Mocht er al een JSON-bestand beschikbaar zijn dan kun je dat via onderstaande knop inladen.</p>
+            <p>Deze app kent naast dit tabblad 2 tabbladen waar de benodigde gegevens ingevuld moeten worden en op het laatste tabblad geeft de mogelijkheid de voor DDAS benodigde JSON te downloaden (dit kan overigens ook overal door op Ctrl-s (Windows) of Cmd-s (MacOS) te drukken). Dit gedownloade bestand kunt u vervolgens bij het CBS-portaal uploaden.</p>
+            <p>Mocht er al een JSON-bestand beschikbaar zijn waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen.</p>
             <input type="file" accept="application/json" onChange={handleFileUpload} className="mt-3" />
             <br/>
             <br/>
@@ -405,17 +415,6 @@ function RegistrationForm() {
 
       <SaveShortcut data={formAlgemeen} formLevering={formLevering} formTrajecten={formTrajecten} schema={validateSchema} />
 
-      <div className="mt-4 p-3 bg-light border rounded">
-        <h5>Debug: Ingevoerde gegevens:</h5>
-        <h6>formAlgemeen</h6>
-        <pre>{JSON.stringify(formAlgemeen, null, 2)}</pre>
-        <hr />
-        <h6>formLevering</h6>
-        <pre>{JSON.stringify(formLevering, null, 2)}</pre>
-        <hr />
-        <h6>formTrajecten</h6>
-        <pre>{JSON.stringify(formTrajecten, null, 2)}</pre>
-      </div>
     </div>
   );
 }
