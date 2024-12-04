@@ -11,20 +11,20 @@ async function generateFilename(data, formLevering, formTrajecten) {
   }
 
   // Vervang spaties door liggende streepjes
-  const sanitizedOrganisatieNaam = organisatieNaam.replace(/ /g, '_');
+  const sanitizedOrganisatieNaam = organisatieNaam.replace(/[[&\/\#, +()$~%.'":@^*?<>{}]/g, '_');
 
   // Stel de bestandsnaam samen
   return `SHV_2024_${sanitizedOrganisatieNaam}.json`;
 }
 
-async function saveFileWithFallback(data, filename) {
+async function saveFileWithFallback(blob, filename) {
   if ('showSaveFilePicker' in window) {
     console.log('showSaveFilePicker beschikbaar! Save As dialoog wordt aangeboden.');
     try {
       const options = {
         types: [
           {
-            description: 'JSON bestanden',
+            description: 'DDAS JSON bestand',
             accept: { 'application/json': ['.json'] },
           },
         ],
@@ -32,7 +32,7 @@ async function saveFileWithFallback(data, filename) {
       };
       const handle = await window.showSaveFilePicker(options);
       const writable = await handle.createWritable();
-      await writable.write(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      await writable.write(blob);
       await writable.close();
     } catch (error) {
       console.error('Opslaan geannuleerd of fout:', error);
@@ -46,7 +46,7 @@ async function saveFileWithFallback(data, filename) {
       return; // Stop met de functie als de gebruiker annuleert
     }
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(data);
+    link.href = URL.createObjectURL(blob);
     link.download = filename;
     document.body.appendChild(link);
     link.click();
@@ -55,7 +55,7 @@ async function saveFileWithFallback(data, filename) {
 }
 
 export async function downloadJSON(data, formLevering, formTrajecten, schema) {
-  // Alles in formAlgemeen stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
+  // Alles in formAlgemeen (data) stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
   data.leveringen = [];
   formLevering.schuldhulptrajecten = formTrajecten;
   data.leveringen.push(formLevering);
@@ -70,6 +70,7 @@ export async function downloadJSON(data, formLevering, formTrajecten, schema) {
     return false;
   }
   const json = JSON.stringify(data, null, 2);
+  console.log('JSON: ' + json);
   const blob = new Blob([json], { type: 'application/json' });
   let bestandsnaam = await generateFilename(data);
   saveFileWithFallback(blob, bestandsnaam);
