@@ -379,10 +379,17 @@ function RegistrationForm() {
                 </button>
                 <button
                   onClick={() => {
+                    const userConfirmed = window.confirm(
+                      `Traject ${currentTrajectIndex + 1} ("${formTrajecten[currentTrajectIndex].omschrijving}") wordt verwijderd!\nWeet u het zeker?`
+                    );
+                    if (!userConfirmed) {
+                      return false;
+                    } else {
                       console.log('Traject met id ' + currentTrajectIndex + ' wordt verwijderd.');
                       const newArray = formTrajecten.filter((item, index) => index !== currentTrajectIndex);
                       setFormTrajecten(newArray); // Updates the state with the new array
                       (currentTrajectIndex > 0 ? setCurrentTrajectIndex(currentTrajectIndex - 1) : setCurrentTrajectIndex(currentTrajectIndex));
+                    }
                   }}
                   disabled={formTrajecten.length === 0}
                 >
