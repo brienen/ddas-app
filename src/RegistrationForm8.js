@@ -379,6 +379,7 @@ function RegistrationForm() {
                 </button>
                 <button
                   onClick={() => {
+                    console.log('trajecten: ' + JSON.stringify(formTrajecten, null, 2));
                     const userConfirmed = window.confirm(
                       `Traject ${currentTrajectIndex + 1} ("${formTrajecten[currentTrajectIndex].omschrijving}") wordt verwijderd!\nWeet u het zeker?`
                     );
@@ -391,7 +392,7 @@ function RegistrationForm() {
                       (currentTrajectIndex > 0 ? setCurrentTrajectIndex(currentTrajectIndex - 1) : setCurrentTrajectIndex(currentTrajectIndex));
                     }
                   }}
-                  disabled={formTrajecten.length === 0}
+                  disabled={formTrajecten[currentTrajectIndex] === undefined}
                 >
                   Verwijder dit traject
                 </button>
