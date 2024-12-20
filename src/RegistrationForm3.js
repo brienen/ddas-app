@@ -48,6 +48,10 @@ const initialFormData = {
       },
       schuldhulptrajecten: [
         {
+<<<<<<< Updated upstream
+=======
+          gemeentecode: "",
+>>>>>>> Stashed changes
           startdatum: "",
           einddatum: "",
           toekenningsdatum: "",
@@ -81,10 +85,17 @@ const uischemaGeneral = {
       type: "Group",
       label: "Aanleverende Organisatie",
       elements: [
+<<<<<<< Updated upstream
         { type: "Control", scope: "#/properties/leveringen" },
         { type: "Control", scope: "#/properties/leveringen/0/properties/aanleverende_organisatie/properties/(Statutaire) Naam" },
         { type: "Control", scope: "#/properties/leveringen/items/properties/aanleverende_organisatie/properties/(Statutaire) Naam" },
         { type: "Control", scope: "#/properties/leveringen/0/properties/aanleverende_organisatie/properties/KvK-nummer" },
+=======
+//        { type: "Control", scope: "#/properties/leveringen" },
+//        { type: "Control", scope: "#/properties/leveringen/0/properties/aanleverende_organisatie/properties/(Statutaire) Naam" },
+        { type: "Control", scope: "#/properties/leveringen/items/properties/aanleverende_organisatie/properties/(Statutaire) Naam" },
+//        { type: "Control", scope: "#/properties/leveringen/0/properties/aanleverende_organisatie/properties/KvK-nummer" },
+>>>>>>> Stashed changes
         { type: "Control", scope: "#/properties/leveringen/items/properties/aanleverende_organisatie/properties/postcode" },
         { type: "Control", scope: "#/properties/leveringen/items/properties/aanleverende_organisatie/properties/gemeentecode" },
         { type: "Control", scope: "#/properties/leveringen/items/properties/aanleverende_organisatie/properties/contactpersonen" }
@@ -109,6 +120,10 @@ const uischemaSchuldhulptrajecten = {
               type: "Group",
               label: "Algemeen",
               elements: [
+<<<<<<< Updated upstream
+=======
+                { type: "Control", scope: "#/properties/gemeentecode" },
+>>>>>>> Stashed changes
                 { type: "Control", scope: "#/properties/startdatum" },
                 { type: "Control", scope: "#/properties/einddatum" },
                 { type: "Control", scope: "#/properties/toekenningsdatum" },
@@ -165,7 +180,11 @@ function RegistrationForm() {
     initialFormData.leveringen[0].schuldhulptrajecten
   );
 
+<<<<<<< Updated upstream
   
+=======
+
+>>>>>>> Stashed changes
   const handleTabSelect = (key) => {
     setActiveTab(key);
   };
@@ -219,7 +238,11 @@ function RegistrationForm() {
   return (
     <div className="container mt-4">
       <h2 className="mb-4">DDAS-Invoerapp</h2>
+<<<<<<< Updated upstream
       
+=======
+
+>>>>>>> Stashed changes
       <Tabs activeKey={activeTab} onSelect={handleTabSelect} className="mb-3">
 
         <Tab eventKey="start" title="Start">
@@ -305,10 +328,21 @@ function RegistrationForm() {
 
       <div className="mt-4 p-3 bg-light border rounded">
         <h5>Debug: Ingevoerde gegevens:</h5>
+<<<<<<< Updated upstream
+=======
+        <h6>formData</h6>
+        <pre>{JSON.stringify(formData, null, 2)}</pre>
+        <hr />
+        <h6>formDataSchuldhulptrajecten</h6>
+>>>>>>> Stashed changes
         <pre>{JSON.stringify(formDataSchuldhulptrajecten, null, 2)}</pre>
       </div>
     </div>
   );
 }
 
+<<<<<<< Updated upstream
 export default RegistrationForm;
+=======
+export default RegistrationForm;
+>>>>>>> Stashed changes

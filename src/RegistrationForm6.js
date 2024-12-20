@@ -3,11 +3,18 @@ import { JsonForms } from '@jsonforms/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import { materialRenderers, materialCells } from '@jsonforms/material-renderers';
+<<<<<<< Updated upstream
 import { rankWith, uiTypeIs } from '@jsonforms/core';
+=======
+>>>>>>> Stashed changes
 
 import { validateJSON } from './validation';
 import { downloadJSON } from './downloadJSON';
 import { SaveShortcut } from './SaveShortcut';
+<<<<<<< Updated upstream
+=======
+import './RegistrationForm.css';
+>>>>>>> Stashed changes
 
 import originalSchema from './json_schema_Uitwisselmodel.json';
 // import schemaUrl from 'https://raw.githubusercontent.com/VNG-Realisatie/ddas/refs/heads/main/v1.0/json_schema_Uitwisselmodel.json';
@@ -240,12 +247,20 @@ function RegistrationForm() {
     const headerElements = container.querySelectorAll(".MuiCardHeader-title");
     const handleClick = (event) => {
       const header = event.target;
+<<<<<<< Updated upstream
       console.log("geklikt op: " + header.textContent);
+=======
+      console.log("geklikt op: " + header.textContent + " - classList: " + header.classList);
+>>>>>>> Stashed changes
       const parent = header.parentElement.parentElement.parentElement; // eerst 3 niveaus omhoog
       const content = parent.querySelector(".MuiCardContent-root"); // dan naar groep
       if (content) {
         console.log("Display: " + content.style.display);
         content.style.display = content.style.display === "none" ? "block" : "none";
+<<<<<<< Updated upstream
+=======
+        header.classList.toggle("open"); // Toggle de class "open"
+>>>>>>> Stashed changes
       } else {
         console.log("MuiCardContent niet gevonden...");
       }

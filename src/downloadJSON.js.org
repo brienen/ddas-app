@@ -11,51 +11,14 @@ async function generateFilename(data, formLevering, formTrajecten) {
   }
 
   // Vervang spaties door liggende streepjes
-  const sanitizedOrganisatieNaam = organisatieNaam.replace(/[[&\/\#, +()$~%.'":@^*?<>{}]/g, '_');
+  const sanitizedOrganisatieNaam = organisatieNaam.replace(/ /g, '_');
 
   // Stel de bestandsnaam samen
   return `SHV_2024_${sanitizedOrganisatieNaam}.json`;
 }
 
-async function saveFileWithFallback(blob, filename) {
-  if ('showSaveFilePicker' in window) {
-    console.log('showSaveFilePicker beschikbaar! Save As dialoog wordt aangeboden.');
-    try {
-      const options = {
-        types: [
-          {
-            description: 'DDAS JSON bestand',
-            accept: { 'application/json': ['.json'] },
-          },
-        ],
-        suggestedName: filename,
-      };
-      const handle = await window.showSaveFilePicker(options);
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-    } catch (error) {
-      console.error('Opslaan geannuleerd of fout:', error);
-    }
-  } else {
-    // Fallback: Gebruik standaard downloadgedrag
-    console.warn('File System Access API niet beschikbaar. Gebruik standaard download.');
-    filename = prompt('LET OP!\n\nUw browser ondersteunt geen locatiekeuze voor bestanden. Het bestand wordt opgeslagen in de standaard "Downloads" map.\n\nGeef een bestandsnaam op:', filename);
-    if (filename === null || filename.trim() === '') {
-      console.warn('Gebruiker heeft opslaan afgebroken.');
-      return; // Stop met de functie als de gebruiker annuleert
-    }
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-}
-
 export async function downloadJSON(data, formLevering, formTrajecten, schema) {
-  // Alles in formAlgemeen (data) stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
+  // Alles in formAlgemeen stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
   data.leveringen = [];
   formLevering.schuldhulptrajecten = formTrajecten;
   data.leveringen.push(formLevering);
@@ -70,11 +33,18 @@ export async function downloadJSON(data, formLevering, formTrajecten, schema) {
     return false;
   }
   const json = JSON.stringify(data, null, 2);
-<<<<<<< Updated upstream
-  console.log('JSON: ' + json);
-=======
->>>>>>> Stashed changes
   const blob = new Blob([json], { type: 'application/json' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
   let bestandsnaam = await generateFilename(data);
-  saveFileWithFallback(blob, bestandsnaam);
+  const filename = prompt('Geef een bestandsnaam op:', bestandsnaam);
+  if (filename === null || filename.trim() === '') {
+    return; // Stop met de functie als de gebruiker annuleert
+  }
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
 }

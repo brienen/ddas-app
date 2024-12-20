@@ -9,10 +9,16 @@ import { downloadJSON } from './downloadJSON';
 import { SaveShortcut } from './SaveShortcut';
 import './RegistrationForm.css';
 
+<<<<<<< Updated upstream
 import originalSchema from './json_schema_Uitwisselmodel.json';
 // import schemaUrl from 'https://raw.githubusercontent.com/VNG-Realisatie/ddas/refs/heads/main/v1.0/json_schema_Uitwisselmodel.json';
 
 const validateSchema = originalSchema;
+=======
+import originalSchema from './json_schema_Uitwisselmodel_app.json'; // beetje aangepast voor volgorde velden...
+import validateSchema from './json_schema_Uitwisselmodel.json'; // wel valideren tegen echt schema
+
+>>>>>>> Stashed changes
 const startdatumLevering = '2024-01-01';
 const einddatumLevering = '2024-12-31';
 
@@ -99,7 +105,11 @@ const uischemaLevering = {
   label: "Aanleverende Organisatie",
   elements: [
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/(Statutaire) Naam" },
+<<<<<<< Updated upstream
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/KvK-nummer" },
+=======
+    { type: "Control", label: "KvK nummer", scope: "#/properties/aanleverende_organisatie/properties/KvK-nummer" },
+>>>>>>> Stashed changes
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/postcode" },
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/gemeentecode" },
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/contactpersonen" },
@@ -134,11 +144,25 @@ const uischemaTrajecten = {
       type: "Group",
       label: "Proces",
       elements: [
+<<<<<<< Updated upstream
+=======
+        { type: "Control", scope: "#/properties/informatieEnAdvies" },
+>>>>>>> Stashed changes
         { type: "Control", scope: "#/properties/aanmelding" },
         { type: "Control", scope: "#/properties/intake" },
         { type: "Control", scope: "#/properties/planVanAanpak" },
         { type: "Control", scope: "#/properties/stabilisatie" },
+<<<<<<< Updated upstream
         { type: "Control", scope: "#/properties/begeleiding" },
+=======
+        {
+          type: "Group",
+          label: "Begeleiding",
+          elements: [
+            { type: "Control", scope: "#/properties/begeleiding" }
+          ]
+        },
+>>>>>>> Stashed changes
         { type: "Control", scope: "#/properties/oplossing" },
         { type: "Control", scope: "#/properties/schuldregeling" },
         { type: "Control", scope: "#/properties/uitstroom" },
@@ -150,7 +174,10 @@ const uischemaTrajecten = {
       label: "Overige",
       elements: [
         { type: "Control", scope: "#/properties/crisisinterventies" },
+<<<<<<< Updated upstream
         { type: "Control", scope: "#/properties/informatieEnAdvies" },
+=======
+>>>>>>> Stashed changes
         { type: "Control", scope: "#/properties/voorlopigeVoorzieningen" },
         { type: "Control", scope: "#/properties/moratoria" }
       ]
