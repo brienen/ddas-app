@@ -70,10 +70,7 @@ export async function downloadJSON(data, formLevering, formTrajecten, schema) {
     return false;
   }
   const json = JSON.stringify(data, null, 2);
-<<<<<<< Updated upstream
   console.log('JSON: ' + json);
-=======
->>>>>>> Stashed changes
   const blob = new Blob([json], { type: 'application/json' });
   let bestandsnaam = await generateFilename(data);
   saveFileWithFallback(blob, bestandsnaam);

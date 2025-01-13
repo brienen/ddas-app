@@ -9,16 +9,10 @@ import { downloadJSON } from './downloadJSON';
 import { SaveShortcut } from './SaveShortcut';
 import './RegistrationForm.css';
 
-<<<<<<< Updated upstream
 import originalSchema from './json_schema_Uitwisselmodel.json';
 // import schemaUrl from 'https://raw.githubusercontent.com/VNG-Realisatie/ddas/refs/heads/main/v1.0/json_schema_Uitwisselmodel.json';
 
 const validateSchema = originalSchema;
-=======
-import originalSchema from './json_schema_Uitwisselmodel_app.json'; // beetje aangepast voor volgorde velden...
-import validateSchema from './json_schema_Uitwisselmodel.json'; // wel valideren tegen echt schema
-
->>>>>>> Stashed changes
 const startdatumLevering = '2024-01-01';
 const einddatumLevering = '2024-12-31';
 
@@ -91,10 +85,12 @@ const uischemaAlgemeen = {
       type: "Group",
       label: "Leveringsinformatie",
       elements: [
-        { type: "Control", scope: "#/properties/startdatumLevering" },
+        { type: "Control", scope: "#/properties/startdatumLevering"},
         { type: "Control", scope: "#/properties/einddatumLevering" },
 //        { type: "Control", scope: "#/properties/aanleverdatumEnTijd" },
-        { type: "Control", scope: "#/properties/codeGegevensleverancier" }
+        { type: "Control", scope: "#/properties/codeGegevensleverancier",options: {
+          readonly: true
+        } }
       ]
     }
   ]
@@ -105,11 +101,7 @@ const uischemaLevering = {
   label: "Aanleverende Organisatie",
   elements: [
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/(Statutaire) Naam" },
-<<<<<<< Updated upstream
-    { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/KvK-nummer" },
-=======
-    { type: "Control", label: "KvK nummer", scope: "#/properties/aanleverende_organisatie/properties/KvK-nummer" },
->>>>>>> Stashed changes
+    { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/KvK-nummer", "label": "Kvk-nummer" },
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/postcode" },
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/gemeentecode" },
     { type: "Control", scope: "#/properties/aanleverende_organisatie/properties/contactpersonen" },
@@ -120,10 +112,10 @@ const uischemaTrajecten = {
   type: "VerticalLayout",
   elements: [
 //   { type: "Control", scope: "#" }
-    { type: "Control", scope: "#/properties/omschrijving", label: "Omschrijving" },
+    { type: "Control", scope: "#/properties/omschrijving", label: "Omschrijving"},
     {
       type: "Group",
-      label: "Algemeen",
+      label: "Algemeen: voor welke gemeente en over welke periode wordt de levering gedaan?",
       elements: [
         { type: "Control", scope: "#/properties/gemeentecode" },
         { type: "Control", scope: "#/properties/startdatum" },
@@ -134,7 +126,7 @@ const uischemaTrajecten = {
     },
     {
       type: "Group",
-      label: "Client en Schulden",
+      label: "Client en Schulden: om wie gaat het en wat zijn de schulden?",
       elements: [
         { type: "Control", scope: "#/properties/client" },
         { type: "Control", scope: "#/properties/schulden" }
@@ -142,27 +134,13 @@ const uischemaTrajecten = {
     },
     {
       type: "Group",
-      label: "Proces",
+      label: "Proces: welke stappen in het schuldhulptraject zijn doorlopen?",
       elements: [
-<<<<<<< Updated upstream
-=======
-        { type: "Control", scope: "#/properties/informatieEnAdvies" },
->>>>>>> Stashed changes
-        { type: "Control", scope: "#/properties/aanmelding" },
+        { type: "Control", scope: "#/properties/aanmelding"},
         { type: "Control", scope: "#/properties/intake" },
         { type: "Control", scope: "#/properties/planVanAanpak" },
         { type: "Control", scope: "#/properties/stabilisatie" },
-<<<<<<< Updated upstream
         { type: "Control", scope: "#/properties/begeleiding" },
-=======
-        {
-          type: "Group",
-          label: "Begeleiding",
-          elements: [
-            { type: "Control", scope: "#/properties/begeleiding" }
-          ]
-        },
->>>>>>> Stashed changes
         { type: "Control", scope: "#/properties/oplossing" },
         { type: "Control", scope: "#/properties/schuldregeling" },
         { type: "Control", scope: "#/properties/uitstroom" },
@@ -171,13 +149,10 @@ const uischemaTrajecten = {
     },
     {
       type: "Group",
-      label: "Overige",
+      label: "Overige: zijn er nog andere zaken die spelen?",
       elements: [
         { type: "Control", scope: "#/properties/crisisinterventies" },
-<<<<<<< Updated upstream
         { type: "Control", scope: "#/properties/informatieEnAdvies" },
-=======
->>>>>>> Stashed changes
         { type: "Control", scope: "#/properties/voorlopigeVoorzieningen" },
         { type: "Control", scope: "#/properties/moratoria" }
       ]
@@ -362,7 +337,7 @@ function RegistrationForm() {
           <Tab eventKey="schuldhulptrajecten" title="Schuldhulptrajecten">
             <div className="p-3 border rounded bg-light">
               <h5>Schuldhulptrajecten</h5>
-              <p>Vul de gegevens in met betrekking tot schuldhulptrajecten die binnen deze levering vallen.</p>
+              <p>Vul de gegevens in met betrekking tot schuldhulptrajecten die je wilt aanbieden. Vul steeds per client (of 2 clienten als ze gezamenlijk aansprakelijk zijn) de gegevens in van het schuldhulptraject wat hij/zij doorloopt, of heeft doorlopen. Zijn er meer cliënten maak dan nieuwe schuldhulptraject aan.</p>
               <div className="d-flex justify-content-between mt-3">
                 <button
                   onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
