@@ -11,7 +11,7 @@ async function generateFilename(data, formLevering, formTrajecten) {
   }
 
   // Vervang spaties door liggende streepjes
-  const sanitizedOrganisatieNaam = organisatieNaam.replace(/[[&\/\#, +()$~%.'":@^*?<>{}]/g, '_');
+  const sanitizedOrganisatieNaam = organisatieNaam.replace(/[[&/#, +()$~%.'":@^*?<>{}]/g, '_');
 
   // Stel de bestandsnaam samen
   return `SHV_2024_${sanitizedOrganisatieNaam}.json`;
