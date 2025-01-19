@@ -21,7 +21,3 @@
   font-family: "Material Symbols Outlined";
   content: "\eae6"; /*keyboard_control_key - NB: moet in aanroep Google Symbols in index.html zitten! */
 }
-
-h5 {
-  font-size: 1.35rem;
-}

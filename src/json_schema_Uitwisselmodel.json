@@ -88,7 +88,7 @@
                                 },
                                 "omschrijving": {
                                     "type": "string",
-                                    "description": "Vul hier een voor u herkenbare om schrijving in."
+                                    "description": "Vul hier een voor jou herkenbare omschrijving in."
                                 },
                                 "totaalSchuldbedragBijAanvangSchuld": {
                                     "description": "Bedrag in hele euro's nauwkeurig voor elke schuld die meegaat in de schuldregeling. Per schuldeiser kunnen er meerdere openstaande schulden zijn. Deze afzonderlijk meenemen.",
@@ -136,12 +136,12 @@
                                 },
                                 "client": {
                                     "type": "array",
-                                    "description": "Hier dient u tenminste 1 en maximaal 2 cliënten waarvoor de regeling geldt op te geven. Per client geeft u of het BSN op, of alle overige gegevens.",
+                                    "description": "Hier moet tenminste 1 en maximaal 2 cliënten ingevoerd worden waarvoor de regeling geldt. Per client geef je of het BSN op, of alle overige gegevens.",
                                     "minItems": 1,
                                     "maxItems": 2,
                                     "items": {
                                         "type": "object",
-                                        "description": "Een ingeschreven persoon die gebruik maakt van producten en diensten van de gemeente binnen de sociaal domein. U dient hier of het BSN in te vullen, of alle overige gegevens.",
+                                        "description": "Een ingeschreven persoon die gebruik maakt van producten en diensten van de gemeente binnen de sociaal domein. Je dient hier of het BSN in te vullen, of alle overige gegevens.",
                                         "properties": {
                                             "Burgerservicenummer": {
                                                 "type": "string"
@@ -278,7 +278,7 @@
                                 },
                                 "schulden": {
                                     "type": "array",
-                                    "description": "Hier geeft u de schulden op die onderdeel uitmaken van de schuldregeling. Per schuldeiser kunnen er meerdere openstaande schulden zijn. Deze afzonderlijk meenemen. Druk op het plusje om schulden toe te voegen.",
+                                    "description": "Hier voer je de schulden in op die onderdeel uitmaken van de schuldregeling. Per schuldeiser kunnen er meerdere openstaande schulden zijn. Deze afzonderlijk meenemen. Druk op het plusje om schulden toe te voegen.",
                                     "items": {
                                         "type": "object",
                                         "description": "Een schuld is een financi&#235;le verplichting waarbij een persoon nu of in de toekomst een bedrag moet betalen aan een derde. In het kader van schuldhulpverlening wordt over een schuld gesproken als de persoon niet aan deze verplichting kan voldoen. . ",
