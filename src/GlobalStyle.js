@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
     font-size: 1.2rem;
     font-weight: 600;
   }
-  .css-1miy0lu-MuiTypography-root {
+  .MuiTypography-h6 {
     font-size: 1.1rem;
     font-family: 'Manrope', sans-serif;
   }
