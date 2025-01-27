@@ -306,15 +306,19 @@ function RegistrationForm() {
             <Tab eventKey="start" title="Start">
               <div className="p-3 border rounded bg-light">
               <h2>Welkom bij de DDAS-Invoerapp</h2>
-              <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in stand van zaken rond schuldhulpverlening. Kijk voor meer informatie <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden" target="_blank" title="open project website (in nieuw venster)">op de project-website</a>.<br />
-              Met deze app is het mogelijk om met de hand schuldhulpverleningsinformatie conform de DDAS-uitwisselspecificatie op te stellen. Wat er in de verschillende velden ingevoerd moet worden is vastgelegd in het informatiemodel voor DDAS - <a href="https://vng-realisatie.github.io/ddas/v1.0/Detail_Model%20Schuldhulpverlening/" target="_blank" title="open informatiemodel met definities (in nieuw venster)">klik hier om deze (in een nieuw venster) te openen</a>.</p>
+              <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in de stand van zaken rond schuldhulpverlening. Kijk voor meer informatie <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden" target="_blank" title="open project website (in nieuw venster)">op de project-website</a>.<br />
+              Met deze app is het mogelijk om met de hand schuldhulpverleningsinformatie conform de DDAS-uitwisselspecificatie op te stellen. Wat er in de verschillende velden ingevoerd moet worden is vastgelegd in <a href="https://vng-realisatie.github.io/ddas/v1.0/Detail_Model%20Schuldhulpverlening/" target="_blank" title="open informatiemodel met definities (in nieuw venster)">het informatiemodel voor DDAS</a>.</p>
               <p>Loop je tegen problemen aan? Werkt de invoerapp niet zoals verwacht? Of heb je suggesties voor verbeteringen?<br />
               Neem dan contact met ons op via het e-mailadres <a href="mailto:ddas@vng.nl" title="zend een bericht naar het project">ddas@vng.nl</a>.</p>
               <h2>Hoe werkt de invoerapp?</h2>
-              <p>Deze app heeft naast dit startscherm twee tabbladen waar de benodigde gegevens ingevuld moeten worden, en een tabblad waar de ingevoerde gegevens in het vereiste JSON formaat gedownload kan worden (dit kan overigens ook overal door op Ctrl-s (Windows) of Command-s (MacOS) te drukken). Dit gedownloade JSON-bestand kan je vervolgens bij het CBS-portaal uploaden, of je kan er later verder aan werken door het <a href="#upload">hieronder</a> in te laden.</p>
-              <p>Voor de leesbaarheid zijn groepen velden samengevoegd en kan je ze tonen of verbergen door op het pijltje naast de titel te klikken.<br />
-              Bij sommige velden kan je meer dan 1 item toevoegen. Klik op het plusteken naast de titel van het veld om een item toe voegen. Reeds toegevoegde items kunnen verwijderd worden door op het prullenbak-teken naast het item te klikken.<br />
-              Bij de schuldhulptrajecten start je met het eerste traject. Om een traject toe te voegen, klik je op "NIEUW TRAJECT" rechtsboven. Met de knoppen "vorig traject" en "volgend traject" kan je naar de andere trajecten navigeren.</p>
+              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het CBS-portaal uploaden. Je kan er ook later verder aan werken door het <a href="#upload">hieronder</a> in te laden.</p>
+              <p>Handig bij het invoeren:
+                <ul>
+                  <li>Voor de leesbaarheid zijn groepen velden samengevoegd en kan je ze tonen of verbergen door op het pijltje naast de titel te klikken.</li>
+                  <li>Bij sommige velden kan je meer dan 1 item toevoegen. Klik op het plusteken naast de titel van het veld om een item toe te voegen. Reeds toegevoegde items kunnen verwijderd worden door op het prullenbak-teken naast het item te klikken.</li>
+                  <li>Bij de schuldhulptrajecten start je met het eerste traject. Om een traject toe te voegen, klik je op "NIEUW TRAJECT" rechtsboven. Met de knoppen "vorig traject" en "volgend traject" kan je naar de andere trajecten navigeren.</li>
+                </ul>
+              </p>
               <hr />
               <p><strong>LET OP: als je deze pagina ververst of verlaat, dan worden alle velden leeg gemaakt!</strong><br />
               Sla daarom tussentijds de ingevoerde gegevens op in een JSON-bestand. Deze kan later weer ingeladen worden om er verder aan te werken.</p>
