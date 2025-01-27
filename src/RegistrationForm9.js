@@ -11,6 +11,9 @@ import { SaveShortcut } from './SaveShortcut';
 import './RegistrationForm.css';
 
 import originalSchema from './json_schema_Uitwisselmodel.json';
+import CustomDateFieldRenderer from './CustomDateFieldRenderer';
+import { customDateFieldTester } from './CustomDateFieldRenderer';
+// import { Description } from '@mui/icons-material';
 // import schemaUrl from 'https://raw.githubusercontent.com/VNG-Realisatie/ddas/refs/heads/main/v1.0/json_schema_Uitwisselmodel.json';
 
 const validateSchema = originalSchema;
@@ -115,7 +118,7 @@ const uischemaTrajecten = {
       elements: [
         { type: "Control", scope: "#/properties/gemeentecode" },
         { type: "Control", scope: "#/properties/startdatum" },
-        { type: "Control", scope: "#/properties/einddatum" },
+        { type: "Control", scope: "#/properties/einddatum"  },
         { type: "Control", scope: "#/properties/toekenningsdatum" },
         { type: "Control", scope: "#/properties/totaalSchuldbedragBijAanvangSchuld" }
       ]
@@ -267,7 +270,7 @@ function RegistrationForm() {
     // Maak alle elementen met de class 'MuiCardContent-root' binnen de container onzichtbaar
     const contentElements = container.querySelectorAll(".MuiCardContent-root");
     contentElements.forEach((element) => {
-      if (element.parentNode.innerText != "Leveringsinformatie") element.style.display = "none";
+      if (element.parentNode.innerText !== "Leveringsinformatie") element.style.display = "none";
     });
 
     // Voeg event listeners toe aan de header-elementen
@@ -295,7 +298,7 @@ function RegistrationForm() {
 
   return (
     <div>
-      <img className="logo" src={DDAS_logo} />
+      <img className="logo" src={DDAS_logo} alt=""/>
       <h1>DDAS-Invoerapp</h1>
 
       <div className="container mt-4">
@@ -306,8 +309,8 @@ function RegistrationForm() {
             <Tab eventKey="start" title="Start">
               <div className="p-3 border rounded bg-light">
               <h2>Welkom bij de DDAS-Invoerapp</h2>
-              <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in de stand van zaken rond schuldhulpverlening. Kijk voor meer informatie <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden" target="_blank" title="open project website (in nieuw venster)">op de project-website</a>.<br />
-              Met deze app is het mogelijk om met de hand schuldhulpverleningsinformatie conform de DDAS-uitwisselspecificatie op te stellen. Wat er in de verschillende velden ingevoerd moet worden is vastgelegd in <a href="https://vng-realisatie.github.io/ddas/v1.0/Detail_Model%20Schuldhulpverlening/" target="_blank" title="open informatiemodel met definities (in nieuw venster)">het informatiemodel voor DDAS</a>.</p>
+              <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in de stand van zaken rond schuldhulpverlening. Kijk voor meer informatie <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden" target="_blank" title="open project website (in nieuw venster)" rel="noopener noreferrer">op de project-website</a>.<br />
+              Met deze app is het mogelijk om met de hand schuldhulpverleningsinformatie conform de DDAS-uitwisselspecificatie op te stellen. Wat er in de verschillende velden ingevoerd moet worden is vastgelegd in <a href="https://vng-realisatie.github.io/ddas/v1.0/Detail_Model%20Schuldhulpverlening/" target="_blank" title="open informatiemodel met definities (in nieuw venster)" rel="noopener noreferrer">het informatiemodel voor DDAS</a>.</p>
               <p>Loop je tegen problemen aan? Werkt de invoerapp niet zoals verwacht? Of heb je suggesties voor verbeteringen?<br />
               Neem dan contact met ons op via het e-mailadres <a href="mailto:ddas@vng.nl" title="zend een bericht naar het project">ddas@vng.nl</a>.</p>
               <h2>Hoe werkt de invoerapp?</h2>
@@ -323,7 +326,7 @@ function RegistrationForm() {
               <p><strong>LET OP: als je deze pagina ververst of verlaat, dan worden alle velden leeg gemaakt!</strong><br />
               Sla daarom tussentijds de ingevoerde gegevens op in een JSON-bestand. Deze kan later weer ingeladen worden om er verder aan te werken.</p>
               <hr />
-              <h2><a name="upload">Inladen eerder opgeslagen gegevens</a></h2>
+              <h2><a href="#upload">Inladen eerder opgeslagen gegevens</a></h2>
               <p>Als je een JSON-bestand hebt met eerder ingevoerde gegevens, waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen. Let op: als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.</p>
               <input type="file" accept="application/json" onChange={handleFileUpload} className="btn btn-outline-primary" />
               <br/>
@@ -341,12 +344,15 @@ function RegistrationForm() {
             <Tab eventKey="general" title="Algemene Gegevens">
               <div className="p-3 border rounded bg-light">
                 <h2>Algemene Gegevens</h2>
-                <p>Vul de gegevens van de betrokken organisatie in.</p>
+                <p>Vul de gegevens van jouw organisatie in.</p>
                 <JsonForms
                   schema={schemaLevering}
                   uischema={uischemaLevering}
                   data={formLevering}
-                  renderers={materialRenderers}
+                  renderers={[
+                    ...materialRenderers,
+                    { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
+                  ]}
                   cells={materialCells}
                   onChange={({ data, errors }) => setFormLevering(data)}
                 />
@@ -357,7 +363,10 @@ function RegistrationForm() {
                   schema={schemaAlgemeen}
                   uischema={uischemaAlgemeen}
                   data={formAlgemeen}
-                  renderers={materialRenderers}
+                  renderers={[
+                    ...materialRenderers,
+                    { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
+                  ]}
                   cells={materialCells}
                   onChange={({ data, errors }) => setFormAlgemeen(data)}
                 />
@@ -401,8 +410,11 @@ function RegistrationForm() {
                     schema={schemaTrajecten}
                     uischema={uischemaTrajecten}
                     data={formTrajecten[currentTrajectIndex]}
-                    renderers={materialRenderers}
-                    cells={materialCells}
+                    renderers={[
+                      ...materialRenderers,
+                      { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
+                    ]}
+                      cells={materialCells}
                     onChange={({ data: updatedData }) => {
                       const updatedTrajecten = [...formTrajecten];
                       updatedTrajecten[currentTrajectIndex] = updatedData;

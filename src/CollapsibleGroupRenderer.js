@@ -3,18 +3,11 @@ import { JsonForms, withJsonFormsLayoutProps } from '@jsonforms/react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-<<<<<<< Updated upstream
 const CollapsibleGroupRenderer = ({ uischema, schema, path, renderers, data, onChange, handleChange }) => {
   console.log('Props in CollapsibleGroupRenderer:', { uischema, schema, data, path, renderers, onChange, handleChange });
 
   const [expanded, setExpanded] = useState(false);
 
-=======
-const CollapsibleGroupRenderer = ({ uischema, schema, path, renderers, data, onChange }) => {
-  console.log('onChange in CollapsibleGroupRenderer: ', { onChange });
-
-  const [expanded, setExpanded] = useState(false);
->>>>>>> Stashed changes
   const handleAccordionChange = useCallback(() => {
     setExpanded((prevExpanded) => !prevExpanded);
   }, []);
@@ -39,16 +32,11 @@ const CollapsibleGroupRenderer = ({ uischema, schema, path, renderers, data, onC
             onChange={({ data: updatedData }) => {
               if (onChange) {
                 onChange(updatedData);
-<<<<<<< Updated upstream
               } else if (handleChange) {
                 console.warn('onChange is niet gedefinieerd.');
                 handleChange(path, updatedData);
               } else {
                 console.warn('handleChange is niet gedefinieerd');
-=======
-              } else {
-                console.warn('onChange is niet gedefinieerd');
->>>>>>> Stashed changes
               }
             }}
           />

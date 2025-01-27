@@ -5,10 +5,12 @@
     "description": "Het uitwisselmodel is een model dat de gegevens bevat die uitgewisseld worden tussen de verschillende partijen.",
     "properties": {
         "startdatumLevering": {
-            "$ref": "#/$defs/datum"
+            "$ref": "#/$defs/datum",
+            "description": "Startdatum van de levering. Dit is de startdatum van de rapportageperiode."
         },
         "einddatumLevering": {
-            "$ref": "#/$defs/datum"
+            "$ref": "#/$defs/datum",
+            "description": "Einddatum van de levering. Dit is de einddatum van de rapportageperiode."
         },
         "aanleverdatumEnTijd": {
             "$ref": "#/$defs/datum-tijd"
@@ -44,7 +46,7 @@
                                 "type": "string"
                             },
                             "gemeentecode": {
-                                "description": "De gemeentecode als de aanleverende organisatie een gemeente is.",
+                                "description": "De gemeentecode als de aanleverende organisatie een gemeente is. Raadpleeg de lijst met gemeentecodes via: https://www.cbs.nl/nl-nl/onze-diensten/open-data/statline-als-open-data/gemeentelijke-indeling-op-1-januari-2024",
                                 "type": "string"
                             },
                             "contactpersonen": {
@@ -78,10 +80,12 @@
                             "description": "Samenstel van achtereenvolgens uit te voeren en onderling samenhangende deelhandelingen of van opeenvolgende stadia in een proces, voorgesteld als een route die via opeenvolgende bestemmingen naar de eindbestemming voert.",
                             "properties": {
                                 "startdatum": {
+                                    "description": "De datum waarop het traject is afgerond of gestart. Meestal is dit de datum van de aanmelding.",
                                     "$ref": "#/$defs/datum"
                                 },
                                 "einddatum": {
-                                    "$ref": "#/$defs/datum"
+                                    "$ref": "#/$defs/datum",
+                                    "description": "De datum waarop het traject is afgerond of gestopt. Laat leeg als het schuldhulptraject nog niet is afgerond."
                                 },
                                 "toekenningsdatum": {
                                     "$ref": "#/$defs/datum"
@@ -95,7 +99,7 @@
                                     "$ref": "#/$defs/bedrag"
                                 },
                                 "gemeentecode": {
-                                    "description": "De gemeentecode van de gemeente onder wiens verantwoordelijkheid het schuldhulptraject wordt uitgevoerd.",
+                                    "description": "De gemeentecode van de gemeente onder wiens verantwoordelijkheid het schuldhulptraject wordt uitgevoerd. Raadpleeg de lijst met gemeentecodes via: https://www.cbs.nl/nl-nl/onze-diensten/open-data/statline-als-open-data/gemeentelijke-indeling-op-1-januari-2024",
                                     "type": "string"
                                 },
                                 "aanmelding": {
@@ -148,7 +152,7 @@
                                             },
                                             "Geboortedatum": {
                                                 "description": "De datum waarop de ander natuurlijk persoon is geboren.",
-                                                "type": "string"
+                                                "$ref": "#/$defs/datum"
                                             },
                                             "Geslachtsaanduiding": {
                                                 "description": "Een aanduiding die aangeeft dat de ingeschrevene een man of een vrouw is, of dat het geslacht (nog) onbekend is.",
@@ -427,7 +431,7 @@
         "datum": {
             "type": "string",
             "format": "date",
-            "description": "Een datum in het formaat YYYY-MM-DD."
+            "$comment": "Een datum in het formaat YYYY-MM-DD."
         },
         "email": {
             "type": "string",

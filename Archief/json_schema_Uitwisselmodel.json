@@ -45,7 +45,7 @@
                                 "type": "string"
                             },
                             "gemeentecode": {
-                                "description": "De gemeentecode als de aanleverende organisatie een gemeente is.",
+                                "description": "De gemeentecode als de aanleverende organisatie een gemeente is. Is de aanleverende organisatie geen gemeente vul dan niets in. Raadpleeg de lijst met gemeentecodes via: https://www.cbs.nl/nl-nl/onze-diensten/methoden/classificaties/overig/gemeentelijke-indelingen-per-jaar",
                                 "type": "string"
                             },
                             "contactpersonen": {
