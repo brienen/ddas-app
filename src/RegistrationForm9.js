@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { JsonForms } from '@jsonforms/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Tabs, Tab, Button } from 'react-bootstrap';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { materialRenderers, materialCells } from '@jsonforms/material-renderers';
 import DDAS_logo from './DDAS_logo_org.png';
+import './RegistrationForm.css';
 
 import { validateJSON } from './validation';
 import { downloadJSON } from './downloadJSON';
 import { SaveShortcut } from './SaveShortcut';
-import './RegistrationForm.css';
 
 import originalSchema from './json_schema_Uitwisselmodel.json';
 import CustomDateFieldRenderer from './CustomDateFieldRenderer';
@@ -253,6 +254,30 @@ function RegistrationForm() {
 
   const containerRef = useRef(null);
 
+  const theme = createTheme({ // overschrijven opmaak van formulier elementen
+    components: {
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#59377b', // Paarse border bij focus
+            },
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: 'gray', // Kleur van de labeltekst in rust (niet-focused)
+            '&.Mui-focused': {
+              color: '#59377b', // Kleur van de labeltekst bij focus
+            },
+          },
+        },
+      },
+    },
+  });
+
   useEffect(() => {
     // de opmaak is niet makkelijker te beïnvloeden - daarom gebeurt dat dynamisch met useEffect
     const container = containerRef.current;
@@ -314,7 +339,7 @@ function RegistrationForm() {
               <p>Loop je tegen problemen aan? Werkt de invoerapp niet zoals verwacht? Of heb je suggesties voor verbeteringen?<br />
               Neem dan contact met ons op via het e-mailadres <a href="mailto:ddas@vng.nl" title="zend een bericht naar het project">ddas@vng.nl</a>.</p>
               <h2>Hoe werkt de invoerapp?</h2>
-              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het CBS-portaal uploaden. Je kan er ook later verder aan werken door het <a href="#upload">hieronder</a> in te laden.</p>
+              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het CBS-portaal uploaden. Je kan er ook later verder aan werken door het <a href="#upload" title="ga naar uploadveld">hieronder</a> in te laden.</p>
               <p>Handig bij het invoeren:
                 <ul>
                   <li>Voor de leesbaarheid zijn groepen velden samengevoegd en kan je ze tonen of verbergen door op het pijltje naast de titel te klikken.</li>
@@ -326,7 +351,7 @@ function RegistrationForm() {
               <p><strong>LET OP: als je deze pagina ververst of verlaat, dan worden alle velden leeg gemaakt!</strong><br />
               Sla daarom tussentijds de ingevoerde gegevens op in een JSON-bestand. Deze kan later weer ingeladen worden om er verder aan te werken.</p>
               <hr />
-              <h2><a href="#upload">Inladen eerder opgeslagen gegevens</a></h2>
+              <h2><a id="#upload">Inladen eerder opgeslagen gegevens</a></h2>
               <p>Als je een JSON-bestand hebt met eerder ingevoerde gegevens, waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen. Let op: als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.</p>
               <input type="file" accept="application/json" onChange={handleFileUpload} className="btn btn-outline-primary" />
               <br/>
@@ -345,31 +370,35 @@ function RegistrationForm() {
               <div className="p-3 border rounded bg-light">
                 <h2>Algemene Gegevens</h2>
                 <p>Vul de gegevens van jouw organisatie in.</p>
-                <JsonForms
-                  schema={schemaLevering}
-                  uischema={uischemaLevering}
-                  data={formLevering}
-                  renderers={[
-                    ...materialRenderers,
-                    { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
-                  ]}
-                  cells={materialCells}
-                  onChange={({ data, errors }) => setFormLevering(data)}
-                />
+                <ThemeProvider theme={theme}>
+                  <JsonForms
+                    schema={schemaLevering}
+                    uischema={uischemaLevering}
+                    data={formLevering}
+                    renderers={[
+                      ...materialRenderers,
+                      { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
+                    ]}
+                    cells={materialCells}
+                    onChange={({ data, errors }) => setFormLevering(data)}
+                  />
+                  </ThemeProvider>
                 <h2>Gegevens over deze levering</h2>
                 <p>Over welke periode worden gegevens over schuldhulptrajecten aangeleverd? Alle schuldhulptrajecten die tijdens deze periode actief waren (dus gestart voor de einddatum levering en nog niet afgerond of afgerond na de startdatum levering) moeten meegenomen worden bij "Schuldhulptrajecten".<br />
                 NB: De Code Gegevensleverancier kan niet gewijzigd worden, maar is nodig voor de verwerking.</p>
-                <JsonForms
-                  schema={schemaAlgemeen}
-                  uischema={uischemaAlgemeen}
-                  data={formAlgemeen}
-                  renderers={[
-                    ...materialRenderers,
-                    { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
-                  ]}
-                  cells={materialCells}
-                  onChange={({ data, errors }) => setFormAlgemeen(data)}
-                />
+                <ThemeProvider theme={theme}>
+                  <JsonForms
+                    schema={schemaAlgemeen}
+                    uischema={uischemaAlgemeen}
+                    data={formAlgemeen}
+                    renderers={[
+                      ...materialRenderers,
+                      { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
+                    ]}
+                    cells={materialCells}
+                    onChange={({ data, errors }) => setFormAlgemeen(data)}
+                  />
+                </ThemeProvider>
                 <div className="d-flex justify-content-between mt-3">
                   <Button variant="primary" onClick={goToPreviousTab} title="Ga naar vorige tabblad">
                     vorig tabblad
@@ -406,21 +435,23 @@ function RegistrationForm() {
                 </div>
                 <hr />
                 <div>
-                  <JsonForms
-                    schema={schemaTrajecten}
-                    uischema={uischemaTrajecten}
-                    data={formTrajecten[currentTrajectIndex]}
-                    renderers={[
-                      ...materialRenderers,
-                      { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
-                    ]}
-                      cells={materialCells}
-                    onChange={({ data: updatedData }) => {
-                      const updatedTrajecten = [...formTrajecten];
-                      updatedTrajecten[currentTrajectIndex] = updatedData;
-                      setFormTrajecten(updatedTrajecten);
-                    }}
-                  />
+                  <ThemeProvider theme={theme}>
+                    <JsonForms
+                      schema={schemaTrajecten}
+                      uischema={uischemaTrajecten}
+                      data={formTrajecten[currentTrajectIndex]}
+                      renderers={[
+                        ...materialRenderers,
+                        { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
+                      ]}
+                        cells={materialCells}
+                      onChange={({ data: updatedData }) => {
+                        const updatedTrajecten = [...formTrajecten];
+                        updatedTrajecten[currentTrajectIndex] = updatedData;
+                        setFormTrajecten(updatedTrajecten);
+                      }}
+                    />
+                  </ThemeProvider>
                 </div>
 
                 <div className="d-flex justify-content-between mt-3">
