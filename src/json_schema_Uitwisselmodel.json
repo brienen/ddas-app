@@ -80,7 +80,7 @@
                             "description": "Samenstel van achtereenvolgens uit te voeren en onderling samenhangende deelhandelingen of van opeenvolgende stadia in een proces, voorgesteld als een route die via opeenvolgende bestemmingen naar de eindbestemming voert.",
                             "properties": {
                                 "startdatum": {
-                                    "description": "De datum waarop het traject is afgerond of gestart. Meestal is dit de datum van de aanmelding.",
+                                    "description": "De datum waarop het sschuldtraject is gestart. Meestal is dit de datum van de aanmelding.",
                                     "$ref": "#/$defs/datum"
                                 },
                                 "einddatum": {
@@ -107,7 +107,7 @@
                                     "description": "Moment dat een persoon met een hulpvraag komt rondom (dreigende) schulden. Dit kan een persoonlijke, schriftelijke, digitale of telefonische vraag zijn. ",
                                     "properties": {
                                         "crisisinterventie": {
-                                            "description": "Is er sprake van een crisisinterventie? Indicator crisisinterventie. \"Het afwenden van een crisis- of dreigende situatie om zo de mogelijkheid te cre&#235;ren om de klant te helpen via de reguliere schuldhulpverlening.\nVolgens de Wgs gaat het in elk geval om de volgende situaties:\n\u25a0 gedwongen woningontruiming;\n\u25a0 be&#235;indiging van de levering van gas, water, elektriciteit of stadsverwarming;\n\u25a0 opzegging of ontbinding van de zorgverzekering.\nGemeenten kunnen extra situaties toevoegen aan hun crisisprotocol, zoals:\n\u25a0 aangekondigde boedelverkoop of verkoop van de eigen woning;\n\u25a0 loon- of bankbeslag;\n\u25a0 een faillissementsaanvraag.\nEn voor ondernemers:\n\u25a0 beslag op (on)roerende zaken dat het voortbestaan van de onderneming bedreigt;\n\u25a0 opzegging van het bankkrediet.\"",
+                                            "description": "Is de aanmelding gestart in het kader van een crisisinterventie? Indicator crisisinterventie. \"Het afwenden van een crisis- of dreigende situatie om zo de mogelijkheid te cre&#235;ren om de klant te helpen via de reguliere schuldhulpverlening.\nVolgens de Wgs gaat het in elk geval om de volgende situaties:\n\u25a0 gedwongen woningontruiming;\n\u25a0 be&#235;indiging van de levering van gas, water, elektriciteit of stadsverwarming;\n\u25a0 opzegging of ontbinding van de zorgverzekering.\nGemeenten kunnen extra situaties toevoegen aan hun crisisprotocol, zoals:\n\u25a0 aangekondigde boedelverkoop of verkoop van de eigen woning;\n\u25a0 loon- of bankbeslag;\n\u25a0 een faillissementsaanvraag.\nEn voor ondernemers:\n\u25a0 beslag op (on)roerende zaken dat het voortbestaan van de onderneming bedreigt;\n\u25a0 opzegging van het bankkrediet.\"",
                                             "type": "boolean"
                                         },
                                         "startdatum": {
@@ -133,7 +133,8 @@
                                                 "$ref": "#/$defs/datum"
                                             },
                                             "einddatum": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "Datum waarop de begeleiding is afgerond of anderszins gestopt. Laat leeg als de begeleiding nog niet is afgerond."
                                             }
                                         }
                                     }
@@ -177,10 +178,12 @@
                                         "description": "Het afwenden van een crisis- of dreigende situatie om zo de mogelijkheid te cre&#235;ren om de klant te helpen via de reguliere schuldhulpverlening.\nVolgens de Wgs gaat het in elk geval om de volgende situaties:\n\u25a0 gedwongen woningontruiming;\n\u25a0 be&#235;indiging van de levering van gas, water, elektriciteit of stadsverwarming;\n\u25a0 opzegging of ontbinding van de zorgverzekering.\nGemeenten kunnen extra situaties toevoegen aan hun crisisprotocol, zoals:\n\u25a0 aangekondigde boedelverkoop of verkoop van de eigen woning;\n\u25a0 loon- of bankbeslag;\n\u25a0 een faillissementsaanvraag.\nEn voor ondernemers:\n\u25a0 beslag op (on)roerende zaken dat het voortbestaan van de onderneming bedreigt;\n\u25a0 opzegging van het bankkrediet.\n",
                                         "properties": {
                                             "startdatum": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "Als er sprake is geweest van een crisisinterventie, welke datum is deze dan gestart?"
                                             },
                                             "einddatum": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "Datum waarop de crisisinterventie is afgerond, laat leeg als de crisisinterventie nog niet is afgerond."
                                             }
                                         }
                                     }
@@ -189,10 +192,12 @@
                                     "type": "object",
                                     "properties": {
                                         "startdatum": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "Als er sprake is geweest van informatie en advies, welke datum is deze dan gestart?"
                                         },
                                         "einddatum": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "Datum waarop informatie en advies is afgerond, laat leeg als deze nog niet is afgerond."
                                         }
                                     }
                                 },
@@ -205,7 +210,7 @@
                                             "$ref": "#/$defs/datum"
                                         },
                                         "einddatum": {
-                                            "description": "De datum van afronding van de intake. Een klant ontvangt een gemotiveerde afwijzing of een toelatingsbeschikking. ",
+                                            "description": "De datum van afronding van de intake. Een klant ontvangt een gemotiveerde afwijzing of een toelatingsbeschikking. Laat leeg als de intake nog niet is afgerond.",
                                             "$ref": "#/$defs/datum"
                                         },
                                         "beschikkingsdatum": {
@@ -224,16 +229,20 @@
                                         "description": "Het gaat hier om de datum waarop een verzoek tot een moratorium (ex art. 287 b Fw) is ingediend bij de rechter.\n\nEr kan een verzoek tot een moratorium bij de rechter worden gedaan om te voorkomen dat een schuldeiser zijn specifieke inningsmogelijkheden gebruikt, terwijl een aanvraag voor een minnelijke schuldregeling in behandeling is. Het moratorium is bedoeld om het minnelijke traject te kunnen voortzetten.\n\nHet moratorium kan in de volgende situaties worden ingezet:\n- gedwongen woningontruiming;\n- be&#235;indiging van de levering van gas, water elektriciteit of stadsverwarming;\n- opzegging dan wel ontbinding van de zorgverzekering.\n\nHet moratorium duurt maximaal zes maanden.",
                                         "properties": {
                                             "startdatum": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "Als er sprake is van een moratorium, de datum waarop een verzoek tot een moratorium (ex art. 287 b Fw) is ingediend bij de rechter."
                                             },
                                             "einddatum": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "De datum waarop het moratorium eindigt. Laat leeg als het moratorium nog niet is afgerond."
                                             },
                                             "datumAanvraag": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "Als er sprake is van een moratorium, de datum waarop een verzoek tot een moratorium (ex art. 287 b Fw) is ingediend bij de rechter."
                                             },
                                             "datumGoedkeuring": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "De datum waarop het verzoek voor het moratorium is goedgekeurd, laat leeg als er nog geen goedkeuring heeft plaatsgevonden."
                                             }
                                         }
                                     }
@@ -243,10 +252,12 @@
                                     "description": "Ondersteuning die een persoon ontvangt n&#225; een schuldhulptraject, om zo bij de start van een schuldenvrij leven zelfredzaamheid verder te bevorderen &#233;n recidive (terugval) te voorkomen.",
                                     "properties": {
                                         "startdatum": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "Als er sprake is van nazorg, de datum waarop de nazorg is gestart."
                                         },
                                         "einddatum": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "De datum waarop de nazorg is afgerond, laat leeg als de nazorg nog niet is afgerond."
                                         }
                                     }
                                 },
@@ -262,7 +273,7 @@
                                             "$ref": "#/$defs/datum"
                                         },
                                         "einddatum": {
-                                            "description": "Het gaat om het moment dat een schuldregeling (saneringskrediet/schuldbemiddeling) of volledige afbetalingsregeling (betalingsregeling/herfinanciering) daadwerkelijk eindigt. Dit kan zijn na de formele afgesproken periode of een voortijdige beeindiging.",
+                                            "description": "Het gaat om het moment dat een schuldregeling (saneringskrediet/schuldbemiddeling) of volledige afbetalingsregeling (betalingsregeling/herfinanciering) daadwerkelijk eindigt. Dit kan zijn na de formele afgesproken periode of een voortijdige beeindiging. Laat leeg als deze nog niet is afgerond.",
                                             "$ref": "#/$defs/datum"
                                         },
                                         "vtlb": {
@@ -276,7 +287,8 @@
                                     "description": "Een document waarin in elk geval het volgende staat:\n\u25a0 de hulpvraag van de persoon;\n\u25a0 de voorgestelde ondersteuning;\n\u25a0 eventueel de organisatie(s) waarnaar je hebt doorverwezen;\n\u25a0 de voorwaarden voor schuldhulpverlening (bijvoorbeeld dat de persoon geen nieuwe schulden mag maken).\n\nDe hoogte van beslagvrije voet voor de persoon (zie artikel 4a:5 van de Wgs) moet in acht worden genomen.",
                                     "properties": {
                                         "datumAfronding": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "De datum waarop het plan van aanpak is afgerond."
                                         }
                                     }
                                 },
@@ -292,7 +304,7 @@
                                                 "$ref": "#/$defs/bedrag"
                                             },
                                             "peildatum": {
-                                                "description": "Peildatum dat de schuld is vastgesteld.",
+                                                "description": "De datum dat de schuld is vastgesteld.",
                                                 "$ref": "#/$defs/datum"
                                             },
                                             "schuldsoort": {
@@ -348,7 +360,8 @@
                                             "$ref": "#/$defs/datum"
                                         },
                                         "datumVerzoekDwangakkoord": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "Als er sprake is van een dwangakkoord, de datum waarop het verzoek tot dit dwangakkoord (ex art. 287 a Fw) is ingediend bij de rechter."
                                         },
                                         "dwangakkoord": {
                                             "description": "Een vervolgstap die mogelijk is als een of meer schuldeisers blijven weigeren in te stemmen met de minnelijke schuldregelingaanvragen. Dit verzoek wordt ingediend bij de rechtbank (artikel 287a Fw).",
@@ -362,10 +375,12 @@
                                         "type": "object",
                                         "properties": {
                                             "startdatum": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "Als er sprake is van een voorlopige voorziening, de datum waarop deze is gestart."
                                             },
                                             "einddatum": {
-                                                "$ref": "#/$defs/datum"
+                                                "$ref": "#/$defs/datum",
+                                                "description": "De datum waarop de voorlopige voorziening is afgerond, laat leeg als de voorlopige voorziening nog niet is afgerond."
                                             }
                                         }
                                     }
@@ -396,10 +411,12 @@
                                     "description": "Fase van het schuldhulpverleningstraject met als doel de inkomsten en uitgaven van een persoon in evenwicht te brengen. De stabilisatie van inkomen en uitgaven is een resultaat van\nwerkzaamheden uit het integrale plan van aanpak. Als stabilisatie bereikt is kan een betalingsregeling, herfinanciering of schuldregeling worden opgezet. Een belangrijk tweede doel is om de hulpvrager hierbij schuldenrust te bieden: stress wegnemen en tijd maken voor oplossingen naar een schuldenzorgvrije toekomst. In de stabilisatiefase kan een schuldhulpverlener andere instrumenten, activiteiten of ondersteuning inzetten, die bijdragen aan de duurzame oplossing van het financi&#235;le probleem, zoals budgetcoaching, budgetbeheer, beschermingsbewind of flankerende hulp.",
                                     "properties": {
                                         "startdatum": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "de datum waarop stabilistatie is gestart."
                                         },
                                         "einddatum": {
-                                            "$ref": "#/$defs/datum"
+                                            "$ref": "#/$defs/datum",
+                                            "description": "De datum waarop stabilisatie is afgerond, laat leeg als de stabilisatie nog niet is afgerond."
                                         }
                                     }
                                 }
