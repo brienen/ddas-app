@@ -32,10 +32,6 @@ const GlobalStyle = createGlobalStyle`
   .nav-link {
     color: #59377b;
   }
-  .MuiTypography-h6 {
-    font-size: 1.1rem;
-    font-family: 'Manrope', sans-serif;
-  }
   .btn {
     --bs-border-radius: 1.5rem;
   }

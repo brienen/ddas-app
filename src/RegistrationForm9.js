@@ -275,23 +275,32 @@ function RegistrationForm() {
           },
         },
       },
+      MuiTypography: {
+        styleOverrides: {
+          h5: {
+            fontSize: '1.1rem',
+            fontFamily: 'Manrope, sans-serif',
+          },
+          h6: {
+            fontSize: '1.1rem',
+            fontFamily: 'Manrope, sans-serif',
+          },
+        },
+      },
+      MuiGrid: {
+        styleOverrides: {
+          item: {
+            marginBottom: '5px',
+          },
+        },
+      },
     },
   });
 
   useEffect(() => {
-    // de opmaak is niet makkelijker te beïnvloeden - daarom gebeurt dat dynamisch met useEffect
+    // groepen velden moeten ingeklapt en een click-event om open te klappen - gebeurt dynamisch met useEffect
     const container = containerRef.current;
 
-    // Geef alle elementen met de class '.css-1vpwcmr-MuiGrid-root>.MuiGrid-item' (inputvelden) wat meer ruimte
-    const contentInputvelden = container.querySelectorAll(".MuiGrid-item");
-    contentInputvelden.forEach((element) => {
-      element.style.marginBottom = "5px";
-    });
-    // Maak alle elementen met de class 'css-16xl4zq-MuiTypography-root' (label van groep) binnen de container kleiner maken
-    const contentGroupLabels = container.querySelectorAll(".MuiTypography-h5");
-    contentGroupLabels.forEach((element) => {
-      element.style.fontSize = "1.1rem";
-    });
     // Maak alle elementen met de class 'MuiCardContent-root' binnen de container onzichtbaar
     const contentElements = container.querySelectorAll(".MuiCardContent-root");
     contentElements.forEach((element) => {
