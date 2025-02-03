@@ -80,7 +80,7 @@
                             "description": "Samenstel van achtereenvolgens uit te voeren en onderling samenhangende deelhandelingen of van opeenvolgende stadia in een proces, voorgesteld als een route die via opeenvolgende bestemmingen naar de eindbestemming voert.",
                             "properties": {
                                 "startdatum": {
-                                    "description": "De datum waarop het sschuldtraject is gestart. Meestal is dit de datum van de aanmelding.",
+                                    "description": "De datum waarop het schuldtraject is gestart. Meestal is dit de datum van de aanmelding.",
                                     "$ref": "#/$defs/datum"
                                 },
                                 "einddatum": {
