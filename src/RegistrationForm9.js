@@ -474,7 +474,6 @@ function RegistrationForm() {
                   <Button
                     variant="warning"
                     onClick={() => {
-                      console.log('trajecten: ' + JSON.stringify(formTrajecten, null, 2));
                       const userConfirmed = window.confirm(
                         `Traject ${currentTrajectIndex + 1} ("${formTrajecten[currentTrajectIndex].omschrijving}") wordt verwijderd!\nWeet je het zeker?`
                       );
