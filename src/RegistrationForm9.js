@@ -517,7 +517,11 @@ function RegistrationForm() {
               <div className="p-3 border rounded bg-light">
                 <h2>Exporteer Gegevens</h2>
                 <p>Klik op de knop hieronder om de ingevoerde gegevens als JSON-bestand te downloaden.</p>
-                <Button variant="primary" onClick={handleDownload} title="Sla de ingevoerde gegevens op in JSON-bestand">Download JSON-bestand</Button>
+                <p>
+                  <Button variant="primary" onClick={handleDownload} title="Sla de ingevoerde gegevens op in JSON-bestand">Download JSON-bestand</Button>
+                </p>
+                <p>Als de gegevens zijn opgeslagen zonder foutmeldingen, dan kan deze aan CBS aangeboden worden in hun <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank">portaal Armoede en Schulden</a>.<br />
+                De gegevens kunnen ook later in deze applicatie ingelezen worden om verder bewerkt te worden.</p>
                 <hr />
                 <div className="d-flex justify-content-between mt-3">
                   <Button variant="primary" onClick={goToPreviousTab} title="Ga naar vorige tabblad">
