@@ -34,8 +34,10 @@ async function saveFileWithFallback(blob, filename) {
       const writable = await handle.createWritable();
       await writable.write(blob);
       await writable.close();
+      document.getElementById('downloadResultaat').innerHTML = 'Gegevens opgeslagen in bestand ' + handle.name;
     } catch (error) {
       console.error('Opslaan geannuleerd of fout:', error);
+      document.getElementById('downloadResultaat').innerHTML = 'Opslaan is afgebroken - bestand NIET opgeslagen';
     }
   } else {
     // Fallback: Gebruik standaard downloadgedrag
@@ -43,6 +45,7 @@ async function saveFileWithFallback(blob, filename) {
     filename = prompt('LET OP!\n\nUw browser ondersteunt geen locatiekeuze voor bestanden. Het bestand wordt opgeslagen in de standaard "Downloads" map.\n\nGeef een bestandsnaam op:', filename);
     if (filename === null || filename.trim() === '') {
       console.warn('Gebruiker heeft opslaan afgebroken.');
+      document.getElementById('downloadResultaat').innerHTML = 'Opslaan is afgebroken - bestand NIET opgeslagen';
       return; // Stop met de functie als de gebruiker annuleert
     }
     const link = document.createElement('a');
@@ -51,6 +54,7 @@ async function saveFileWithFallback(blob, filename) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    document.getElementById('downloadResultaat').innerHTML = 'Gegevens opgeslagen in bestand ' + filename;
   }
 }
 

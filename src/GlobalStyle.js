@@ -77,5 +77,9 @@ const GlobalStyle = createGlobalStyle`
     --bs-btn-disabled-bg: white;
     --bs-btn-disabled-border-color: #1D1D1B;
   }
+  .uploadResultaat {
+    margin-left: 25px;
+    font-weight: 600;
+  }
 `;
 export default GlobalStyle;

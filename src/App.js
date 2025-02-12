@@ -1,5 +1,5 @@
 import React from 'react';
-import RegistrationForm from './RegistrationForm9';
+import RegistrationForm from './RegistrationForm10';
 import { CssBaseline } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GlobalStyle from './GlobalStyle';
