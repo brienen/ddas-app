@@ -349,7 +349,7 @@ function RegistrationForm() {
               <p>Loop je tegen problemen aan? Werkt de invoerapp niet zoals verwacht? Of heb je suggesties voor verbeteringen?<br />
               Neem dan contact met ons op via het e-mailadres <a href="mailto:ddas@vng.nl" title="zend een bericht naar het project">ddas@vng.nl</a>.</p>
               <h2>Hoe werkt de invoerapp?</h2>
-              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het CBS-portaal uploaden. Je kan er ook later verder aan werken door het <a href="#upload" title="ga naar uploadveld">hieronder</a> in te laden.</p>
+              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank">CBS-portaal</a> uploaden. Je kan er ook later verder aan werken door het <a href="#upload" title="ga naar uploadveld">hieronder</a> in te laden.</p>
               <p>Handig bij het invoeren:
                 <ul>
                   <li>Voor de leesbaarheid zijn groepen velden samengevoegd en kan je ze tonen of verbergen door op het pijltje naast de titel te klikken.</li>
@@ -360,6 +360,7 @@ function RegistrationForm() {
               <hr />
               <p><strong>LET OP: als je deze pagina ververst of verlaat, dan worden alle velden leeg gemaakt!</strong><br />
               Sla daarom tussentijds de ingevoerde gegevens op in een JSON-bestand. Deze kan later weer ingeladen worden om er verder aan te werken.</p>
+              <p>Deze app is (in deze versie) enkel getest in Chrome, Edge en Safari.</p>
               <hr />
               <h2><a id="#upload">Inladen eerder opgeslagen gegevens</a></h2>
               <p>Als je een JSON-bestand hebt met eerder ingevoerde gegevens, waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen. Let op: als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.</p>

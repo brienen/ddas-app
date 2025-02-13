@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.a0eafe91.css",
-    "main.js": "/static/js/main.3f9e9e5e.js",
+    "main.css": "/static/css/main.08335826.css",
+    "main.js": "/static/js/main.120f9990.js",
     "static/js/453.b6f06a78.chunk.js": "/static/js/453.b6f06a78.chunk.js",
     "static/media/DDAS_logo_org.png": "/static/media/DDAS_logo_org.df200baa1745f6f0f2dd.png",
     "index.html": "/index.html",
-    "main.a0eafe91.css.map": "/static/css/main.a0eafe91.css.map",
-    "main.3f9e9e5e.js.map": "/static/js/main.3f9e9e5e.js.map",
+    "main.08335826.css.map": "/static/css/main.08335826.css.map",
+    "main.120f9990.js.map": "/static/js/main.120f9990.js.map",
     "453.b6f06a78.chunk.js.map": "/static/js/453.b6f06a78.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a0eafe91.css",
-    "static/js/main.3f9e9e5e.js"
+    "static/css/main.08335826.css",
+    "static/js/main.120f9990.js"
   ]
 }

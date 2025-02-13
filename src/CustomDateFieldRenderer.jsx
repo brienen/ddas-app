@@ -62,13 +62,22 @@ const CustomDateFieldRenderer = (props) => {
       {/* Datumveld met label */}
       <TextField
         id={path}
-        type="date"
+//      In Safari text veld omdat het veld anders niet leeg gemaakt kan worden
+        type={navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome") ? "text" : "date"}
         value={data || ''}
-        onChange={(event) => handleChange(path, event.target.value)}
+//      Bij een leeg veld, deze null maken om foutmelding dat het veld geen datum is, te voorkomen
+        onChange={(event) => {
+          const value = event.target.value === '' ? null : event.target.value;
+          handleChange(path, value);
+        }}
+        placeholder="YYYY-MM-DD"
+        inputProps={{
+          pattern: "\\d{4}-\\d{2}-\\d{2}",
+        }}
         label={`${label}${required ? ' *' : ''}`} // Voeg een sterretje toe als het veld verplicht is
         InputLabelProps={{ shrink: true }}
-        error={!!errors}
-        helperText={errors || ''}
+        error={!!errors && data !== null} // 🚀 Verberg fout als de waarde null is (omdat in v1.0 van het Schema null waarden niet mogen, maar wij dat wel toestaan)
+        helperText={data !== null ? errors : ''}
         fullWidth
       />
       {/* Toon de description (indien aanwezig) */}
