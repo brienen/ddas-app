@@ -59,8 +59,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
     const start = parseDate(traject.startdatum);
     const eind = parseDate(traject.einddatum);
 
-    let categorie = 'Onbekend';
-
+    let categorie = CATEGORIEEN[5];
     if (start) {
       const startVoor = start < startLevering;
       const startNa = start >= startLevering;
@@ -74,7 +73,6 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
       else if (startVoor && eindNaOfGeen) categorie = CATEGORIEEN[1];
       else if (startNa && eindVoor) categorie = CATEGORIEEN[2];
       else if (startNa && eindNaOfGeen) categorie = CATEGORIEEN[3];
-      else categorie =  CATEGORIEEN[5];
     }
 
     if (!overzicht[code]) {
