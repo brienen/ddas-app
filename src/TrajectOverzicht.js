@@ -10,7 +10,8 @@ const CATEGORIEEN = [
   'Traject liep al, loopt nog',
   'Traject gestart en beëindigd',
   'Traject gestart, loopt nog',
-  'Onbekend',
+  'Buiten rapportageperiode',
+  'Onbekend'
 ];
 
 const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
@@ -63,13 +64,17 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
     if (start) {
       const startVoor = start < startLevering;
       const startNa = start >= startLevering;
+      const startTelaat = start && start > eindLevering;
       const eindVoor = eind && eind < eindLevering;
       const eindNaOfGeen = !eind || eind >= eindLevering;
+      const eindTevroeg = eind && eind < startLevering;
 
-      if (startVoor && eindVoor) categorie = CATEGORIEEN[0];
+      if (startTelaat || eindTevroeg) categorie = CATEGORIEEN[4];
+      else if (startVoor && eindVoor) categorie = CATEGORIEEN[0];
       else if (startVoor && eindNaOfGeen) categorie = CATEGORIEEN[1];
       else if (startNa && eindVoor) categorie = CATEGORIEEN[2];
       else if (startNa && eindNaOfGeen) categorie = CATEGORIEEN[3];
+      else categorie =  CATEGORIEEN[5];
     }
 
     if (!overzicht[code]) {
@@ -171,6 +176,12 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
         </TableBody>
       </Table>
     </TableContainer>
+
+    <div>
+      <br />
+      Verder afstemmen op "op orde" bericht CBS!
+    </div>
+
     </div>
   );
 };
