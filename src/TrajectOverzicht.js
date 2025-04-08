@@ -177,7 +177,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
 
     <div>
       <br />
-      Verder afstemmen op "op orde" bericht CBS!
+      LET OP: dit zijn de totalen van de ingevoerde gegevens. Na indienen bij het CBS wordt een "op orde" rapport gegenereerd met een meer gedetailleerde terugkoppeling. Op basis van dat rapport kunt u besluiten om de gegevens alsnog in te trekken voordat deze gepubliceerd worden.
     </div>
 
     </div>

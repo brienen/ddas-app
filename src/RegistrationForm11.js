@@ -518,9 +518,9 @@ function RegistrationForm() {
               </div>
             </Tab>
 
-            <Tab eventKey="export" title="Controleren en exporteren">
+            <Tab eventKey="export" title="Totalen en exporteren">
               <div className="p-3 border rounded bg-light">
-                <h2>Controleer gegevens</h2>
+                <h2>Totalen</h2>
                 <span className="samenvatting" id="samenvatting">
                   <TrajectOverzicht trajecten={formTrajecten} formAlgemeen={formAlgemeen} />
                 </span>
