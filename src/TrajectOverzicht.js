@@ -16,8 +16,8 @@ const CATEGORIEEN = [
 
 const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
 
-  const [sortKey, setSortKey] = useState('gemeentecode'); // of 'totaal', of een categorie
-  const [sortDirection, setSortDirection] = useState('desc');
+  const [sortKey, setSortKey] = useState('gemeentecode'); // sorteerkolom (kan ook 'totaal', of een categorie uit de array CATEGORIEEN)
+  const [sortDirection, setSortDirection] = useState('asc'); // sorteerrichting asc om te beginnen
 
   const toggleSortDirection = () => {
     setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
@@ -28,9 +28,9 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
       // Zelfde kolom → draai sorteer richting om
       setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
-      // Andere kolom → start met oplopend
+      // Andere kolom - hou sorteerrichting hetzelfde
       setSortKey(key);
-      setSortDirection('asc');
+      // setSortDirection('asc');
     }
   };
 
