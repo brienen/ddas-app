@@ -19,10 +19,6 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
   const [sortKey, setSortKey] = useState('gemeentecode'); // sorteerkolom (kan ook 'totaal', of een categorie uit de array CATEGORIEEN)
   const [sortDirection, setSortDirection] = useState('asc'); // sorteerrichting asc om te beginnen
 
-  const toggleSortDirection = () => {
-    setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-  };
-
   const handleSort = (key) => {
     if (sortKey === key) {
       // Zelfde kolom → draai sorteer richting om
@@ -110,7 +106,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
         : bValue - aValue;
     }
   });
-  if (sortedCodes.length == 0) {
+  if (sortedCodes.length === 0) {
     console.log('sortCodes = 0');
     return <p>Er zijn nog geen schuldhulptrajecten ingevoerd.</p>;
   }
@@ -182,13 +178,6 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
 
     </div>
   );
-};
-
-// Optionele simpele styling
-const cellStyle = {
-  border: '1px solid #ccc',
-  padding: '6px 10px',
-  textAlign: 'center',
 };
 
 export default TrajectOverzicht;

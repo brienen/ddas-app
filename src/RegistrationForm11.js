@@ -347,11 +347,11 @@ function RegistrationForm() {
               <div className="p-3 border rounded bg-light">
               <h2>Welkom bij de DDAS-Invoerapp</h2>
               <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in de stand van zaken rond schuldhulpverlening. Kijk voor meer informatie <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden" target="_blank" title="open project website (in nieuw venster)" rel="noopener noreferrer">op de project-website</a>.<br />
-              Met deze app is het mogelijk om met de hand schuldhulpverleningsinformatie conform de DDAS-uitwisselspecificatie op te stellen. Wat er in de verschillende velden ingevoerd moet worden is vastgelegd in <a href="https://vng-realisatie.github.io/ddas/v1.0/Detail_Model%20Schuldhulpverlening/" target="_blank" title="open informatiemodel met definities (in nieuw venster)" rel="noopener noreferrer">het informatiemodel voor DDAS</a>.</p>
+              Met deze app is het mogelijk om met de hand schuldhulpverleningsinformatie conform de DDAS-uitwisselspecificatie op te stellen. Wat er in de verschillende velden ingevoerd moet worden is vastgelegd in <a href="https://vng-realisatie.github.io/ddas/v1.0/definities/Detail_Model%20Schuldhulpverlening/" target="_blank" title="open informatiemodel met definities (in nieuw venster)" rel="noopener noreferrer">het informatiemodel voor DDAS</a>.</p>
               <p>Loop je tegen problemen aan? Werkt de invoerapp niet zoals verwacht? Of heb je suggesties voor verbeteringen?<br />
               Neem dan contact met ons op via het e-mailadres <a href="mailto:ddas@vng.nl" title="zend een bericht naar het project">ddas@vng.nl</a>.</p>
               <h2>Hoe werkt de invoerapp?</h2>
-              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens kan controleren en in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank">CBS-portaal</a> uploaden. Je kan er ook later verder aan werken door het <a href="#upload" title="ga naar uploadveld">hieronder</a> in te laden.</p>
+              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens kan controleren en in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank" rel="noopener noreferrer">CBS-portaal</a> uploaden. Je kan er ook later verder aan werken door het <a href="#upload" title="ga naar uploadveld">hieronder</a> in te laden.</p>
               <p>Handig bij het invoeren:
                 <ul>
                   <li>Voor de leesbaarheid zijn groepen velden samengevoegd en kan je ze tonen of verbergen door op het pijltje naast de titel te klikken.</li>
@@ -364,7 +364,7 @@ function RegistrationForm() {
               Sla daarom tussentijds de ingevoerde gegevens op in een JSON-bestand. Deze kan later weer ingeladen worden om er verder aan te werken.</p>
               <p>Deze app is (in deze versie) enkel getest in Chrome, Edge en Safari.</p>
               <hr />
-              <h2><a id="#upload">Inladen eerder opgeslagen gegevens</a></h2>
+              <h2 id="upload">Inladen eerder opgeslagen gegevens</h2>
               <p>Als je een JSON-bestand hebt met eerder ingevoerde gegevens, waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen. Let op: als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.</p>
               <input type="file" accept="application/json" onChange={handleFileUpload} className="btn btn-outline-primary" />
               <span className="uploadResultaat" id="uploadResultaat"></span>
@@ -531,7 +531,7 @@ function RegistrationForm() {
                   <Button variant="primary" onClick={handleDownload} title="Sla de ingevoerde gegevens op in JSON-bestand">Download JSON-bestand</Button>
                   <span className="uploadResultaat" id="downloadResultaat"></span>
                 </p>
-                <p>Als de gegevens zijn opgeslagen zonder foutmeldingen, dan kan deze aan CBS aangeboden worden in hun <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank">portaal Armoede en Schulden</a>.<br />
+                <p>Als de gegevens zijn opgeslagen zonder foutmeldingen, dan kan deze aan CBS aangeboden worden in hun <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank" rel="noopener noreferrer">portaal Armoede en Schulden</a>.<br />
                 De gegevens kunnen ook later in deze applicatie ingelezen worden om verder bewerkt te worden.</p>
                 <hr />
                 <div className="d-flex justify-content-between mt-3">
