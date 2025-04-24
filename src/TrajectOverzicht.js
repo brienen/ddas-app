@@ -6,15 +6,18 @@ import {
 import { useState } from 'react';
 
 const CATEGORIEEN = [
-  'Traject liep al, nu beëindigd',
-  'Traject liep al, loopt nog',
-  'Traject gestart en beëindigd',
-  'Traject gestart, loopt nog',
+  'Lopend traject, beëindigd',
+  'Nieuw traject, beëindigd',
+  'Lopend traject, nog actief',
+  'Nieuw traject, nog actief',
   'Buiten rapportageperiode',
   'Onbekend'
 ];
 
 const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
+
+  const formatDatum = (d) =>
+    d ? new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d)) : 'onbekend';
 
   const [sortKey, setSortKey] = useState('gemeentecode'); // sorteerkolom (kan ook 'totaal', of een categorie uit de array CATEGORIEEN)
   const [sortDirection, setSortDirection] = useState('asc'); // sorteerrichting asc om te beginnen
@@ -60,14 +63,14 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
       const startVoor = start < startLevering;
       const startNa = start >= startLevering;
       const startTelaat = start && start > eindLevering;
-      const eindVoor = eind && eind < eindLevering;
-      const eindNaOfGeen = !eind || eind >= eindLevering;
+      const eindVoor = eind && eind <= eindLevering;
+      const eindNaOfGeen = !eind || eind > eindLevering;
       const eindTevroeg = eind && eind < startLevering;
 
       if (startTelaat || eindTevroeg) categorie = CATEGORIEEN[4];
       else if (startVoor && eindVoor) categorie = CATEGORIEEN[0];
-      else if (startVoor && eindNaOfGeen) categorie = CATEGORIEEN[1];
-      else if (startNa && eindVoor) categorie = CATEGORIEEN[2];
+      else if (startNa && eindVoor) categorie = CATEGORIEEN[1];
+      else if (startVoor && eindNaOfGeen) categorie = CATEGORIEEN[2];
       else if (startNa && eindNaOfGeen) categorie = CATEGORIEEN[3];
     }
 
@@ -115,6 +118,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
 
     <div>
     <p>Samenvatting van de ingevoerde gegevens:</p>
+    <p style={{ fontSize: '0.9em' }}>Rapportageperiode: {formatDatum(startLevering)} - {formatDatum(eindLevering)}</p>
 
     <TableContainer component={Paper}>
       <Table>
@@ -173,7 +177,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
 
     <div>
       <br />
-      LET OP: dit zijn de totalen van de ingevoerde gegevens. Na indienen bij het CBS wordt een "op orde" rapport gegenereerd met een meer gedetailleerde terugkoppeling. Op basis van dat rapport kunt u besluiten om de gegevens alsnog in te trekken voordat deze gepubliceerd worden.
+      LET OP: dit zijn de totalen van de ingevoerde gegevens. Na indienen bij het CBS wordt een "op orde" rapport gegenereerd met een meer gedetailleerde terugkoppeling. Op basis van dat rapport kunt u besluiten om de gegevens alsnog in te trekken voordat deze verwerkt worden.
     </div>
 
     </div>
