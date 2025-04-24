@@ -4,9 +4,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Bouwbestanden
+# Bouwbestanden (wel de build bestanden)
 dist/
-build/
+# build/
 
 # Verberg omgevingsbestanden
 .env
