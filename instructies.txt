@@ -1,0 +1,18 @@
+Python instellen:
+> source venv/bin/activate
+App starten:
+> npm start
+App builden:
+> npm run build
+
+NB: mogelijk is node.js een verkeerde versie. Dit checken:
+> node -v
+Als dit lager is dan 16, dan kijken wat de laatste stable versie is (LTS):
+> nvm ls-remote
+en die installeren:
+> nvm install 20 (of ander nummer)
+en als default activeren:
+> nvm alias default 20
+Dan npm installeren en starten:
+> npm install
+> npm start
