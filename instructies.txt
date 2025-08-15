@@ -1,3 +1,6 @@
+Ga naar juiste map:
+> cd /Users/govertclaus/OneDrive/Documenten/VNG/Schulden/DDAS/Handmatige\ bestandslevering/ddas-app/ddas-app
+
 Python instellen:
 > source venv/bin/activate
 App starten:

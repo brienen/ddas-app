@@ -19,38 +19,8 @@ import { customDateFieldTester } from './CustomDateFieldRenderer';
 // import schemaUrl from 'https://raw.githubusercontent.com/VNG-Realisatie/ddas/refs/heads/main/v1.0/json_schema_Uitwisselmodel.json';
 
 const validateSchema = originalSchema;
-// const startdatumLevering = '2024-01-01';
-// const einddatumLevering = '2024-12-31';
-
-function formatDateToDMY(date) {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // maanden zijn 0-indexed
-  const year = date.getFullYear();
-  return `${year}-${month}-${day}`;
-}
-
-function getLastHalfYearRange(today = new Date()) {
-  const year = today.getFullYear();
-  const month = today.getMonth(); // 0-indexed: januari = 0
-  let startDate, endDate;
-
-  if (month >= 6) {
-    // juli t/m december => laatste halfjaar was jan-jun
-    startDate = new Date(year, 0, 1);       // 1 jan dit jaar
-    endDate = new Date(year, 5, 30);        // 30 juni dit jaar
-  } else {
-    // jan t/m juni => laatste halfjaar was jul-dec vorig jaar
-    startDate = new Date(year - 1, 6, 1);   // 1 juli vorig jaar
-    endDate = new Date(year - 1, 11, 31);   // 31 dec vorig jaar
-  }
-
-  return {
-    startdatumLevering: formatDateToDMY(startDate),
-    einddatumLevering: formatDateToDMY(endDate),
-  }
-}
-
-const { startdatumLevering, einddatumLevering } = getLastHalfYearRange();
+const startdatumLevering = '2024-01-01';
+const einddatumLevering = '2024-12-31';
 
 // het schema wordt opgedeeld, maar de $defs moeten overal meegenomen worden - daarbij helpt deze functie
 function addDefsToNestedProperties(schema, defs) {

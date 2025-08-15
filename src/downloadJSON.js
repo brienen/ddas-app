@@ -1,20 +1,42 @@
 import { validateJSON } from './validation';
+// import { formatDateToDMY } from './CustomDateFieldRenderer';
+import { getLastHalfYearRange } from './CustomDateFieldRenderer';
 
-async function generateFilename(data, formLevering, formTrajecten) {
+async function generateFilename(data) {
   // Controleer of de vereiste gegevens aanwezig zijn
-  const organisatieNaam =
-    data?.leveringen?.[0]?.aanleverende_organisatie?.['(Statutaire) Naam'];
+  let organisatieNaam = data?.leveringen?.[0]?.aanleverende_organisatie?.['(Statutaire) Naam'];
+  let startLevering = data?.startdatumLevering;
+  let eindLevering = data?.einddatumLevering;
 
   if (!organisatieNaam) {
     console.warn('Organisatienaam niet gevonden. Bestandsnaam wordt standaard ingesteld.');
-    return 'SHV_2024_organisatienaam.json';
+    organisatieNaam = "organisatie";
   }
-
   // Vervang spaties door liggende streepjes
   const sanitizedOrganisatieNaam = organisatieNaam.replace(/[[&/#, +()$~%.'":@^*?<>{}]/g, '_');
 
+  // periode in bestandsnaam
+  if (startLevering == "" || eindLevering == "") {
+    console.warn('Geen start- en/of einddatum levering gevonden - standaardwaarde wordt gebruikt');
+    const { startdatumLevering, einddatumLevering } = getLastHalfYearRange();
+    startLevering = startdatumLevering;
+    eindLevering = einddatumLevering;
+  }
+  const startdatum = new Date(startLevering.substring(0,4), parseInt(startLevering.substring(5,7)) - 1, startLevering.substring(8,10));
+  const einddatum = new Date(eindLevering.substring(0,4), parseInt(eindLevering.substring(5,7)) - 1, eindLevering.substring(8,10));
+  const jaar = startdatum.getFullYear();
+  const aantalMaanden = 12 * (einddatum.getFullYear() - startdatum.getFullYear()) + einddatum.getMonth() - startdatum.getMonth() + 1; // plus 1 omdat maanden bij 0 beginnen
+  let periode = startdatum.getFullYear();
+  if (aantalMaanden < 3) {
+    periode = startdatum.getFullYear() + "M" + String(einddatum.getMonth() + 1).padStart(2, '0');;
+  } else if (aantalMaanden < 6) {
+    periode = startdatum.getFullYear() + "Q" + String(Math.floor((einddatum.getMonth() + 1)/4) + 1);
+  } else if (aantalMaanden < 12) {
+    periode = startdatum.getFullYear() + "H" + String(Math.floor(einddatum.getMonth()/6) + 1);
+  }
+
   // Stel de bestandsnaam samen
-  return `SHV_2024_${sanitizedOrganisatieNaam}.json`;
+  return `SHV_${periode}_${sanitizedOrganisatieNaam}.json`;
 }
 
 async function saveFileWithFallback(blob, filename) {

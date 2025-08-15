@@ -110,7 +110,6 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen }) => {
     }
   });
   if (sortedCodes.length === 0) {
-    console.log('sortCodes = 0');
     return <p>Er zijn nog geen schuldhulptrajecten ingevoerd.</p>;
   }
 
