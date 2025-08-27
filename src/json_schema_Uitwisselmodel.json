@@ -141,7 +141,7 @@
                                 },
                                 "client": {
                                     "type": "array",
-                                    "description": "Hier moet tenminste 1 en maximaal 2 cliënten ingevoerd worden waarvoor de regeling geldt. Per client geef je of het BSN op, of alle overige gegevens.",
+                                    "description": "Hier moet tenminste 1 en maximaal 2 cliënten ingevoerd worden waarvoor de regeling geldt. Per client geef je of het BSN op, of alle overige gegevens. Druk op het plusje om een cliënt toe te voegen.",
                                     "minItems": 1,
                                     "maxItems": 2,
                                     "items": {

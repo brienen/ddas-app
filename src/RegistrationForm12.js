@@ -227,6 +227,7 @@ function RegistrationForm() {
   });
   const [activeTab, setActiveTab] = useState("start");
   const [currentTrajectIndex, setCurrentTrajectIndex] = useState(0);
+  const [isSaved, setIsSaved] = useState(true);
   const handleTabSelect = (key) => {
     setActiveTab(key);
   };
@@ -249,6 +250,7 @@ function RegistrationForm() {
 
   const handleDownload = () => {
     downloadJSON(formAlgemeen, formLevering, formTrajecten, validateSchema);
+    setIsSaved(true);
   };
 
   const handleFileUpload = (event) => {
@@ -259,6 +261,7 @@ function RegistrationForm() {
         try {
           const json = JSON.parse(e.target.result);
           uploadJson(json, setFormAlgemeen, setFormLevering, setFormTrajecten, setCurrentTrajectIndex, file.name);
+          setIsSaved(true);
         } catch (error) {
           console.error("Error parsing JSON file", error);
           alert("Ongeldig JSON-bestand.");
@@ -353,13 +356,31 @@ function RegistrationForm() {
     headerElements.forEach((header) => {
       header.addEventListener("click", handleClick);
     });
-    // Cleanup: Verwijder event listeners bij unmounting
+
+    const handleBeforeUnload = (e) => {
+      if (!isSaved) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+
+    let timer;
+    if (isSaved) {
+      timer = setTimeout(() => setIsSaved(null), 4000);
+    }
+    return () => clearTimeout(timer);
+
+    // cleanup functie
     return () => {
       headerElements.forEach((header) => {
         header.removeEventListener("click", handleClick);
       });
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []); // Lege afhankelijkhedenlijst: wordt alleen uitgevoerd bij de eerste render
+
+  }, [isSaved]); // Alleen isSaved meegeven: wordt alleen uitgevoerd bij de eerste render
 
   return (
     <div>
@@ -387,13 +408,14 @@ function RegistrationForm() {
                   <li>Bij de schuldhulptrajecten start je met het eerste traject. Om een traject toe te voegen, klik je op "NIEUW TRAJECT" rechtsboven. Met de knoppen "vorig traject" en "volgend traject" kan je naar de andere trajecten navigeren.</li>
                 </ul>
               </p>
+              <p>Deze app is (in deze versie) enkel getest in Chrome, Edge en Safari.</p>
               <hr />
               <p><strong>LET OP: als je deze pagina ververst of verlaat, dan worden alle velden leeg gemaakt!</strong><br />
               Sla daarom tussentijds de ingevoerde gegevens op in een JSON-bestand. Deze kan later weer ingeladen worden om er verder aan te werken.</p>
-              <p>Deze app is (in deze versie) enkel getest in Chrome, Edge en Safari.</p>
               <hr />
               <h2 id="upload">Inladen eerder opgeslagen gegevens</h2>
-              <p>Als je een JSON-bestand hebt met eerder ingevoerde gegevens, waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen. Let op: als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.</p>
+              <p>Als je een JSON-bestand hebt met eerder ingevoerde gegevens, waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen.<br />
+              <strong>Let op: als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.</strong></p>
               <input type="file" accept="application/json" onChange={handleFileUpload} className="btn btn-outline-primary" />
               <span className="uploadResultaat" id="uploadResultaat"></span>
               <br/>
@@ -423,7 +445,10 @@ function RegistrationForm() {
                     ]}
                     validationMode="NoValidation"
                     cells={materialCells}
-                    onChange={({ data, errors }) => setFormLevering(data)}
+                    onChange={({ data, errors }) => {
+                      setFormLevering(data);
+                      setIsSaved(false);
+                    }}
                   />
                   </ThemeProvider>
                 <h2>Gegevens over deze levering</h2>
@@ -439,7 +464,10 @@ function RegistrationForm() {
                       { tester: customDateFieldTester, renderer: CustomDateFieldRenderer }
                     ]}
                     cells={materialCells}
-                    onChange={({ data, errors }) => setFormAlgemeen(data)}
+                    onChange={({ data, errors }) => {
+                      setFormAlgemeen(data);
+                      setIsSaved(false);
+                    }}
                   />
                 </ThemeProvider>
                 <div className="d-flex justify-content-between mt-3">
@@ -490,6 +518,7 @@ function RegistrationForm() {
                         const updated = [...formTrajecten];
                         updated[currentTrajectIndex] = updatedData;
                         setFormTrajecten(updated);
+                        setIsSaved(false);
                       }}
                     />
                   </ThemeProvider>
@@ -545,14 +574,14 @@ function RegistrationForm() {
               </div>
             </Tab>
 
-            <Tab eventKey="export" title="Totalen en exporteren">
+            <Tab eventKey="export" title="Totalen en opslaan">
               <div className="p-3 border rounded bg-light">
                 <h2>Totalen</h2>
                 <span className="samenvatting" id="samenvatting">
                   <TrajectOverzicht trajecten={formTrajecten} formAlgemeen={formAlgemeen} />
                 </span>
                 <hr />
-                <h2>Exporteer gegevens</h2>
+                <h2>Opslaan gegevens</h2>
                 <p>Klik op de knop hieronder om de ingevoerde gegevens als JSON-bestand te downloaden.</p>
                 <p>
                   <Button variant="primary" onClick={handleDownload} title="Sla de ingevoerde gegevens op in JSON-bestand">Download JSON-bestand</Button>
@@ -569,6 +598,20 @@ function RegistrationForm() {
               </div>
             </Tab>
           </Tabs>
+          <div style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            backgroundColor: isSaved ? '#28a745' : '#ffc107',
+            color: 'white',
+            padding: '10px 14px',
+            borderRadius: '8px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+            fontSize: '0.85em',
+          }}>
+          {isSaved === false && <div>⚠ Niet-opgeslagen wijzigingen</div>}
+          {isSaved === true && <div>✓ Opgeslagen</div>}
+          </div>
         </div>
 
         <SaveShortcut data={formAlgemeen} formLevering={formLevering} formTrajecten={formTrajecten} schema={validateSchema} />
