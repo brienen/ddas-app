@@ -56,7 +56,7 @@ async function generateFilename(data) {
   return `SHV_${periode}_${sanitizedOrganisatieNaam}.json`;
 }
 
-async function saveFileWithFallback(blob, filename) {
+async function saveFileWithFallback(blob, filename, setIsSaved) {
   if ('showSaveFilePicker' in window) {
     console.log('showSaveFilePicker beschikbaar! Save As dialoog wordt aangeboden.');
     try {
@@ -74,6 +74,7 @@ async function saveFileWithFallback(blob, filename) {
       await writable.write(blob);
       await writable.close();
       document.getElementById('downloadResultaat').innerHTML = 'Gegevens opgeslagen in bestand ' + handle.name;
+      setIsSaved(true);
     } catch (error) {
       console.error('Opslaan geannuleerd of fout:', error);
       document.getElementById('downloadResultaat').innerHTML = 'Opslaan is afgebroken - bestand NIET opgeslagen';
@@ -94,6 +95,7 @@ async function saveFileWithFallback(blob, filename) {
     link.click();
     document.body.removeChild(link);
     document.getElementById('downloadResultaat').innerHTML = 'Gegevens opgeslagen in bestand ' + filename;
+    setIsSaved(true);
   }
 }
 
@@ -111,7 +113,7 @@ function removeNullValues(obj) {
   return obj; // Laat andere waarden ongemoeid
 }
 
-export async function downloadJSON(data, formLevering, formTrajecten, schema) {
+export async function downloadJSON(data, formLevering, formTrajecten, schema, setIsSaved) {
 
   // Alles in formAlgemeen (data) stoppen - eerst de leveringen leegmaken en dan de met formTrajecten gevulde formLevering toevorgen
   data.leveringen = [];
@@ -131,5 +133,5 @@ export async function downloadJSON(data, formLevering, formTrajecten, schema) {
   const json = JSON.stringify(cleanedData, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   let bestandsnaam = await generateFilename(data);
-  saveFileWithFallback(blob, bestandsnaam);
+  saveFileWithFallback(blob, bestandsnaam, setIsSaved);
 }

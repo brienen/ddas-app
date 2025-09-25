@@ -257,8 +257,8 @@ function RegistrationForm() {
   };
 
   const handleDownload = () => {
-    downloadJSON(formAlgemeen, formLevering, formTrajecten, validateSchema);
-    setIsSaved(true);
+    downloadJSON(formAlgemeen, formLevering, formTrajecten, validateSchema, setIsSaved);
+    // setIsSaved(true);
   };
 
   const handleFileUpload = (event) => {
@@ -491,7 +491,7 @@ function RegistrationForm() {
                     validationMode="NoValidation"
                     cells={materialCells}
                     onChange={({ data, errors }) => {
-                      console.log('Eerste keer: ', isInitializingRef.current);
+                      // console.log('Eerste keer: ', isInitializingRef.current);
                       setFormLevering(data);
                       if (!isInitializingRef.current) {
                         setIsSaved(false);
@@ -514,7 +514,7 @@ function RegistrationForm() {
                     cells={materialCells}
                     onChange={({ data, errors }) => {
                       setFormAlgemeen(data);
-                      console.log('Eerste keer: ', isInitializingRef.current);
+                      // console.log('Eerste keer: ', isInitializingRef.current);
                       if (!isInitializingRef.current) {
                         setIsSaved(false);
                       }
@@ -566,7 +566,7 @@ function RegistrationForm() {
                       ]}
                       cells={materialCells}
                       onChange={({ data: updatedData }) => {
-                        console.log('Eerste keer: ', isInitializingRef.current);
+                        // console.log('Eerste keer: ', isInitializingRef.current);
                         const updated = [...formTrajecten];
                         updated[currentTrajectIndex] = updatedData;
                         setFormTrajecten(updated);
@@ -665,7 +665,9 @@ function RegistrationForm() {
               borderRadius: '8px',
               boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
               fontSize: '0.85em',
-            }}>
+              cursor: 'pointer',
+            }}
+            onClick={handleDownload}>
               Niet-opgeslagen wijzigingen
             </div>
           )}
