@@ -634,7 +634,12 @@ function RegistrationForm() {
               <div className="p-3 border rounded bg-light">
                 <h2>Totalen</h2>
                 <span className="samenvatting" id="samenvatting">
-                  <TrajectOverzicht trajecten={formTrajecten} formAlgemeen={formAlgemeen} />
+                  <TrajectOverzicht
+                    trajecten={formTrajecten}
+                    formAlgemeen={formAlgemeen}
+                    setCurrentTrajectIndex={setCurrentTrajectIndex}
+                    setActiveTab={setActiveTab}
+                  />
                 </span>
                 <hr />
                 <h2>Opslaan gegevens</h2>
