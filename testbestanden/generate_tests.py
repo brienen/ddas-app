@@ -127,7 +127,7 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
         }
 
     # Intake
-    if neemmee(9):
+    if neemmee(8):
         traject["intake"] = {
             "startdatum": date_str(start + timedelta(days=5)),
             "einddatum": date_str(start + timedelta(days=25)),
@@ -142,8 +142,7 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
     # planVanAanpak
     if neemmee():
         traject["planVanAanpak"] = {
-            "startdatum": date_str(start - timedelta(days=15)),
-            "einddatum": date_str(start - timedelta(days=3))
+            "datumAfronding": date_str(start - timedelta(days=15))
         }
 
     # stabilisatie
@@ -166,13 +165,20 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
             "einddatum": date_str(start + timedelta(days=90))
         }
 
+    # informatieEnAdvies
+    if neemmee(2):
+        traject["informatieEnAdvies"] = {
+            "startdatum": date_str(start - timedelta(days=15)),
+            "einddatum": date_str(start + timedelta(days=90))
+        }
+
     # Begeleiding
     if variant in ["lopend", "afgerond", "crisis"]:
         traject["begeleiding"] = generate_begeleiding(start)
 
     # Afgerond traject
     if variant == "afgerond":
-        end = start + timedelta(days=500)
+        end = start + timedelta(days=random.randint(20, 500))
         traject["einddatum"] = date_str(end)
 
         traject["oplossing"] = {
@@ -205,7 +211,7 @@ def generate_levering(
     bsn_start: int,
     aantal_trajecten: int
 ) -> dict:
-    variants = ["minimal", "lopend", "afgerond", "afwijzing", "crisis"]
+    variants = ["minimal", "lopend", "afgerond", "afgerond", "afgerond", "afwijzing", "crisis"]
     gemeentecodes = ["0503", "0599", "0518", "0546"]
 
     return {
