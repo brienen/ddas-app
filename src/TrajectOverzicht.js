@@ -157,7 +157,6 @@ const processtappen = [
   });
 
 
-// niet meer nodig?
   const processtapTellingen = {};
 
   processtappen.forEach((stap) => {
@@ -174,7 +173,7 @@ const processtappen = [
       );
     }).length;
   });
-// tot hier?
+
 
   const stapLabel = (naam) =>
     naam.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (s) => s.toUpperCase());
@@ -204,7 +203,7 @@ const processtappen = [
       </Typography>
 
       <TableContainer component={Paper}>
-        <Table>
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>
@@ -254,9 +253,13 @@ const processtappen = [
                       {...(telling[cat] > 0 && {
                         onClick: () => {
                           const indicesVoorCategorie = trajectIndexPerCodeCat[code]?.[cat] || [];
-                          const trajectenVoorCategorie = indicesVoorCategorie.map(
-                            (i) => trajecten[i]
-                          );
+//                          const trajectenVoorCategorie = indicesVoorCategorie.map(
+//                            (i) => trajecten[i]
+//                          );
+                          const trajectenVoorCategorie = indicesVoorCategorie.map((i) => ({
+                            traject: trajecten[i],
+                            originalIndex: i
+                          }));
                           openTrajectenDialog(
                             `Trajecten voor categorie ${cat} (${code})`,
                             trajectenVoorCategorie
@@ -277,15 +280,37 @@ const processtappen = [
                 </TableRow>
               );
             })}
+            <TableRow>
+              <TableCell><strong>Totaal</strong></TableCell>
+              {CATEGORIEEN.map((cat) => {
+                const totaalPerCategorie = Object.values(overzicht).reduce(
+                  (sum, telling) => sum + (telling[cat] || 0),
+                  0
+                );
+                return (
+                  <TableCell key={cat} align="center">
+                    {totaalPerCategorie}
+                  </TableCell>
+                );
+              })}
+              <TableCell align="center">
+                {Object.values(overzicht).reduce(
+                  (sum, telling) =>
+                    sum + CATEGORIEEN.reduce((catSum, cat) => catSum + (telling[cat] || 0), 0),
+                  0
+                )}
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
 
       <Typography variant="h8" style={{ marginTop: "1em" }}>
+        <br />
         Overzicht aantal trajecten per processtap (actief binnen rapportageperiode)
       </Typography>
 
-      <TableContainer component={Paper} style={{ marginTop: "1em" }}>
+      <TableContainer component={Paper} style={{ marginTop: "0em" }}>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -299,38 +324,54 @@ const processtappen = [
             {Object.entries(tellingPerGemeenteEnStap).map(([gemeente, telling]) => (
               <TableRow key={gemeente}>
                 <TableCell>{gemeente}</TableCell>
-                {processtappen.map((stap) => {
-                  const aantal = telling[stap];
-                  const bijbehorendeTrajecten = trajectenPerGemeente[gemeente].filter((traject) => {
-                    const stapData = traject[stap];
-                    if (!stapData) return false;
-                    const start = stapData.startdatum ? new Date(stapData.startdatum) : null;
-                    const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
-                    return (!eind || startLevering <= eind) && (!start || eindLevering >= start);
-                  });
+                {
+                  processtappen.map((stap) => {
+                    const aantal = telling[stap];
 
-                  return (
-                    <TableCell
-                      key={stap}
-                      align="center"
-                      {...(aantal > 0 && {
-                        onClick: () =>
-                          openTrajectenDialog(
-                            `Trajecten voor stap ${stap} in ${gemeente}`,
-                            bijbehorendeTrajecten
-                          ),
-                        title: "Klik om de bijbehorende trajecten te bekijken",
-                        style: {
-                          cursor: "pointer",
-                          color: "blue",
-                          textDecoration: "underline"
-                        }
-                      })}
-                    >
-                      {aantal}
-                    </TableCell>
-                  );
-                })}
+                    const bijbehorendeTrajecten = trajectenPerGemeente[gemeente]
+                      .map((traject) => {
+                        // 🔑 Zoek het originele indexnummer in de volledige set
+                        const originalIndex = trajecten.findIndex((t) => t === traject);
+                        return { traject, originalIndex };
+                      })
+                      .filter(({ traject, originalIndex }) => {
+                        if (originalIndex === -1) return false;
+
+                        const stapData = traject[stap];
+                        if (!stapData) return false;
+
+                        const start = stapData.startdatum ? new Date(stapData.startdatum) : null;
+                        const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
+
+                        return (
+                          (!eind || startLevering <= eind) &&
+                          (!start || eindLevering >= start)
+                        );
+                      });
+
+                    return (
+                      <TableCell
+                        key={stap}
+                        align="center"
+                        {...(aantal > 0 && {
+                          onClick: () =>
+                            openTrajectenDialog(
+                              `Trajecten voor stap ${stap} in ${gemeente}`,
+                              bijbehorendeTrajecten
+                            ),
+                          title: "Klik om de bijbehorende trajecten te bekijken",
+                          style: {
+                            cursor: "pointer",
+                            color: "blue",
+                            textDecoration: "underline"
+                          }
+                        })}
+                      >
+                        {aantal}
+                      </TableCell>
+                    );
+                  })
+                }
               </TableRow>
             ))}
             <TableRow>
@@ -353,12 +394,12 @@ const processtappen = [
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <List>
-            {selectedTrajectList.map((traject, index) => (
+            {selectedTrajectList.map(({ traject, originalIndex }) => (
               <ListItem
-                key={index}
+                key={originalIndex}
                 button
                 onClick={() => {
-                  setCurrentTrajectIndex(index);
+                  setCurrentTrajectIndex(originalIndex);
                   setActiveTab("schuldhulptrajecten");
                   setDialogOpen(false);
                 }}
