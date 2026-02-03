@@ -19,12 +19,13 @@ const CATEGORIEEN = [
 const processtappen = [
   "aanmelding",
   "intake",
-  "planVanAanpak",
+//  "planVanAanpak",
+  "informatieEnAdvies",
   "stabilisatie",
-  "begeleiding",
+//  "begeleiding",
   "oplossing",
-  "schuldregeling",
-  "uitstroom",
+//  "schuldregeling",
+//  "uitstroom",
   "nazorg"
 ];
 
@@ -161,7 +162,11 @@ const processtappen = [
 
   processtappen.forEach((stap) => {
     processtapTellingen[stap] = trajecten.filter((traject) => {
-      const stapData = traject[stap];
+      let stapData = traject[stap];
+//      if (Array.isArray(stapData)) {                  // er zijn meerdere van deze stap
+//        let aantalInStap = traject[stap].length - 1;  // pak de laatste (is meestal de meest recente)
+//        let stapData = traject[stap][aantalInStap];
+//      }
       if (!stapData || !stapData.startdatum) return false;
 
       const start = new Date(stapData.startdatum);
@@ -172,6 +177,7 @@ const processtappen = [
         (!eind || eind > new Date(startLevering))
       );
     }).length;
+    console.log("stap: " + stap + ", telling: " + processtapTellingen[stap]);
   });
 
 
@@ -337,16 +343,17 @@ const processtappen = [
                       .filter(({ traject, originalIndex }) => {
                         if (originalIndex === -1) return false;
 
-                        const stapData = traject[stap];
+                        let stapData = traject[stap];
                         if (!stapData) return false;
 
                         const start = stapData.startdatum ? new Date(stapData.startdatum) : null;
                         const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
+                        // if (toondeze) console.log(stap + " heeft start: " + start + " en eind: " + eind);
 
                         return (
-                          (!eind || startLevering <= eind) &&
-                          (!start || eindLevering >= start)
-                        );
+                            (!eind || startLevering <= eind) &&
+                            (eindLevering >= start)
+                          );
                       });
 
                     return (
