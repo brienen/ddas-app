@@ -19,13 +19,15 @@ const CATEGORIEEN = [
 const processtappen = [
   "aanmelding",
   "intake",
-//  "planVanAanpak",
+  "crisisinterventies",
+  "planVanAanpak",
   "informatieEnAdvies",
+  "moratoria",
   "stabilisatie",
-//  "begeleiding",
+  "begeleiding",
   "oplossing",
-//  "schuldregeling",
-//  "uitstroom",
+  "schuldregeling",
+  "uitstroom",
   "nazorg"
 ];
 
@@ -135,49 +137,44 @@ const processtappen = [
     trajectenPerGemeente[code].push(traject);
   });
 
-  const tellingPerGemeenteEnStap = {};
 
+  const teltDezeMee = (traject, stap) => {
+    let stapData = traject[stap];
+    if (!stapData) return false;
+    if (Array.isArray(stapData)) {                // als een stap een array is (bv bij Begeleiding)
+      stapData = stapData[stapData.length - 1];   // de laatste pakken (is meestal de meest recente)
+    }
+    const start = stapData.startdatum ? new Date(stapData.startdatum) : stapData.datumAfronding ? new Date(stapData.datumAfronding) : stapData.datum ? new Date(stapData.datum) : null;
+    const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
+    // alle trajecten die tijdens de rapportageperiode actief waren, krijgen een true
+    // bij 1 datum (!stapData.startdatum) moet start binnen periode vallen
+    // bij 2 datum (stapData.startdatum) moet start < eindperiode en eind > startperiode of leeg
+    return (
+      (eindLevering >= start && startLevering <= start && !stapData.startdatum) ||
+      (eindLevering >= start && (!eind || startLevering <= eind) && stapData.startdatum)
+    );
+  }
+
+  const tellingPerGemeenteEnStap = {};
   Object.entries(trajectenPerGemeente).forEach(([gemeente, lijst]) => {
     const telling = {};
 
     processtappen.forEach((stap) => {
       const aantal = lijst.filter((traject) => {
-        const stapData = traject[stap];
-        if (!stapData) return false;
-
-        const start = stapData.startdatum ? new Date(stapData.startdatum) : null;
-        const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
-
-        return (!eind || startLevering <= eind) && (!start || eindLevering >= start);
+        return teltDezeMee(traject, stap);
       }).length;
-
       telling[stap] = aantal;
     });
 
     tellingPerGemeenteEnStap[gemeente] = telling;
   });
 
-
   const processtapTellingen = {};
 
   processtappen.forEach((stap) => {
     processtapTellingen[stap] = trajecten.filter((traject) => {
-      let stapData = traject[stap];
-//      if (Array.isArray(stapData)) {                  // er zijn meerdere van deze stap
-//        let aantalInStap = traject[stap].length - 1;  // pak de laatste (is meestal de meest recente)
-//        let stapData = traject[stap][aantalInStap];
-//      }
-      if (!stapData || !stapData.startdatum) return false;
-
-      const start = new Date(stapData.startdatum);
-      const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
-
-      return (
-        start < new Date(eindLevering) &&
-        (!eind || eind > new Date(startLevering))
-      );
+      return teltDezeMee(traject, stap);
     }).length;
-    console.log("stap: " + stap + ", telling: " + processtapTellingen[stap]);
   });
 
 
@@ -313,7 +310,7 @@ const processtappen = [
 
       <Typography variant="h8" style={{ marginTop: "1em" }}>
         <br />
-        Overzicht aantal trajecten per processtap (actief binnen rapportageperiode)
+        Overzicht aantal trajecten per processtap (uitgevoerd / actief binnen rapportageperiode)
       </Typography>
 
       <TableContainer component={Paper} style={{ marginTop: "0em" }}>
@@ -332,8 +329,6 @@ const processtappen = [
                 <TableCell>{gemeente}</TableCell>
                 {
                   processtappen.map((stap) => {
-                    const aantal = telling[stap];
-
                     const bijbehorendeTrajecten = trajectenPerGemeente[gemeente]
                       .map((traject) => {
                         // 🔑 Zoek het originele indexnummer in de volledige set
@@ -341,26 +336,14 @@ const processtappen = [
                         return { traject, originalIndex };
                       })
                       .filter(({ traject, originalIndex }) => {
-                        if (originalIndex === -1) return false;
-
-                        let stapData = traject[stap];
-                        if (!stapData) return false;
-
-                        const start = stapData.startdatum ? new Date(stapData.startdatum) : null;
-                        const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
-                        // if (toondeze) console.log(stap + " heeft start: " + start + " en eind: " + eind);
-
-                        return (
-                            (!eind || startLevering <= eind) &&
-                            (eindLevering >= start)
-                          );
+                        return teltDezeMee(traject, stap);
                       });
 
                     return (
                       <TableCell
                         key={stap}
                         align="center"
-                        {...(aantal > 0 && {
+                        {...(bijbehorendeTrajecten.length > 0 && {
                           onClick: () =>
                             openTrajectenDialog(
                               `Trajecten voor stap ${stap} in ${gemeente}`,
@@ -374,7 +357,7 @@ const processtappen = [
                           }
                         })}
                       >
-                        {aantal}
+                        {bijbehorendeTrajecten.length}
                       </TableCell>
                     );
                   })
