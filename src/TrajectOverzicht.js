@@ -138,17 +138,19 @@ const processtappen = [
   });
 
 
-  const teltDezeMee = (traject, stap) => {
+  const teltDezeMee = (traject, stap) => {        // helperfunctie om te bepalen of een traject meegeteld wordt in de telling van deze stap
     let stapData = traject[stap];
     if (!stapData) return false;
     if (Array.isArray(stapData)) {                // als een stap een array is (bv bij Begeleiding)
       stapData = stapData[stapData.length - 1];   // de laatste pakken (is meestal de meest recente)
     }
+    // startdatum uitlezen - meestal is dat startdatum, maar als er geen einddatum is, dan is het datumAfronding of gewoon datum...
     const start = stapData.startdatum ? new Date(stapData.startdatum) : stapData.datumAfronding ? new Date(stapData.datumAfronding) : stapData.datum ? new Date(stapData.datum) : null;
+    // einddatum is altijd einddatum, maar kan ook ontbreken
     const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
-    // alle trajecten die tijdens de rapportageperiode actief waren, krijgen een true
-    // bij 1 datum (!stapData.startdatum) moet start binnen periode vallen
-    // bij 2 datum (stapData.startdatum) moet start < eindperiode en eind > startperiode of leeg
+    // alle trajecten waarvan de stap tijdens de rapportageperiode actief was of dan is uitgevoerd, krijgen een true en tellen dus mee
+    // als stap 1 datum heeft (!stapData.startdatum) moet start binnen periode vallen (stap uitgevoerd tijdens rapportageperiode)
+    // als stap 2 datums heeft (stapData.startdatum) moet start < eindperiode en eind > startperiode of leeg (stap actief tijdens rapportageperiode)
     return (
       (eindLevering >= start && startLevering <= start && !stapData.startdatum) ||
       (eindLevering >= start && (!eind || startLevering <= eind) && stapData.startdatum)
