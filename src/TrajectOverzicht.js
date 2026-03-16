@@ -19,16 +19,13 @@ const CATEGORIEEN = [
 const processtappen = [
   "aanmelding",
   "intake",
-  "crisisinterventies",
   "planVanAanpak",
-  "informatieEnAdvies",
-  "moratoria",
   "stabilisatie",
-  "begeleiding",
   "oplossing",
   "schuldregeling",
+  "nazorg",
   "uitstroom",
-  "nazorg"
+  "onbekend"
 ];
 
   const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, setActiveTab }) => {
@@ -137,35 +134,57 @@ const processtappen = [
     trajectenPerGemeente[code].push(traject);
   });
 
+// Bepaal laatste stap van een traject
+  const bepaalLaatsteStap = (traject) => {
+    let laatsteStap = null;
+    let laatsteStart = null;
 
-  const teltDezeMee = (traject, stap) => {        // helperfunctie om te bepalen of een traject meegeteld wordt in de telling van deze stap
-    let stapData = traject[stap];
-    if (!stapData) return false;
-    if (Array.isArray(stapData)) {                // als een stap een array is (bv bij Begeleiding)
-      stapData = stapData[stapData.length - 1];   // de laatste pakken (is meestal de meest recente)
-    }
-    // startdatum uitlezen - meestal is dat startdatum, maar als er geen einddatum is, dan is het datumAfronding of gewoon datum...
-    const start = stapData.startdatum ? new Date(stapData.startdatum) : stapData.datumAfronding ? new Date(stapData.datumAfronding) : stapData.datum ? new Date(stapData.datum) : null;
-    // einddatum is altijd einddatum, maar kan ook ontbreken
-    const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
-    // alle trajecten waarvan de stap tijdens de rapportageperiode actief was of dan is uitgevoerd, krijgen een true en tellen dus mee
-    // als stap 1 datum heeft (!stapData.startdatum) moet start binnen periode vallen (stap uitgevoerd tijdens rapportageperiode)
-    // als stap 2 datums heeft (stapData.startdatum) moet start < eindperiode en eind > startperiode of leeg (stap actief tijdens rapportageperiode)
-    return (
-      (eindLevering >= start && startLevering <= start && !stapData.startdatum) ||
-      (eindLevering >= start && (!eind || startLevering <= eind) && stapData.startdatum)
-    );
-  }
+    processtappen.forEach((stap) => {
+      if (stap === "onbekend") return;
+
+      let stapData = traject[stap];
+      if (!stapData) return;
+
+      if (Array.isArray(stapData)) {
+        stapData = stapData[stapData.length - 1];
+      }
+
+      const startDatum =
+        stapData.startdatum ??
+        stapData.datumAfronding ??
+        stapData.datum;
+
+      if (!startDatum) return;
+
+      const start = new Date(startDatum);
+      const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
+
+      if (start > eindLevering) return;
+      if ((eind && eind < startLevering) || stap == "uitstroom" && start < startLevering) return;
+
+      if (!laatsteStart || start > laatsteStart) {
+        laatsteStart = start;
+        laatsteStap = stap;
+      }
+    });
+
+    return laatsteStap ?? "onbekend";
+  };
 
   const tellingPerGemeenteEnStap = {};
   Object.entries(trajectenPerGemeente).forEach(([gemeente, lijst]) => {
     const telling = {};
 
     processtappen.forEach((stap) => {
-      const aantal = lijst.filter((traject) => {
-        return teltDezeMee(traject, stap);
-      }).length;
-      telling[stap] = aantal;
+      telling[stap] = 0;
+    });
+
+    lijst.forEach((traject) => {
+      const laatsteStap = bepaalLaatsteStap(traject);
+
+      if (laatsteStap) {
+        telling[laatsteStap]++;
+      }
     });
 
     tellingPerGemeenteEnStap[gemeente] = telling;
@@ -175,10 +194,9 @@ const processtappen = [
 
   processtappen.forEach((stap) => {
     processtapTellingen[stap] = trajecten.filter((traject) => {
-      return teltDezeMee(traject, stap);
+      return bepaalLaatsteStap(traject) === stap;
     }).length;
   });
-
 
   const stapLabel = (naam) =>
     naam.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (s) => s.toUpperCase());
@@ -312,7 +330,7 @@ const processtappen = [
 
       <Typography variant="h8" style={{ marginTop: "1em" }}>
         <br />
-        Overzicht aantal trajecten per processtap (uitgevoerd / actief binnen rapportageperiode)
+        Overzicht aantal trajecten per processtap (actief op einddatum periode)
       </Typography>
 
       <TableContainer component={Paper} style={{ marginTop: "0em" }}>
@@ -337,10 +355,9 @@ const processtappen = [
                         const originalIndex = trajecten.findIndex((t) => t === traject);
                         return { traject, originalIndex };
                       })
-                      .filter(({ traject, originalIndex }) => {
-                        return teltDezeMee(traject, stap);
+                      .filter(({ traject }) => {
+                        return bepaalLaatsteStap(traject) === stap;
                       });
-
                     return (
                       <TableCell
                         key={stap}
