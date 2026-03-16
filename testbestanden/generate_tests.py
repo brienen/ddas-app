@@ -49,10 +49,10 @@ def is_elfproef_bsn(n: int) -> bool:
 
     return total % 11 == 0
 
-def next_bsn(n: int) -> int:
-    candidate = n + 1
+def next_bsn(n: int, elf_proef: bool) -> int:
+    candidate = n
     while True:
-        if is_elfproef_bsn(candidate):
+        if is_elfproef_bsn(candidate) or not elf_proef:
             return candidate
         candidate += 1
 
@@ -139,6 +139,23 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
             )
         }
 
+    # crisisinterventies
+    if neemmee(1):
+        traject["crisisinterventies"] = [];
+        traject["crisisinterventies"].append({
+            "startdatum": date_str(start - timedelta(days=15)),
+            "einddatum": date_str(start - timedelta(days=3))
+        })
+
+    # moratoria
+    if neemmee(1):
+        traject["moratoria"] = [];
+        traject["moratoria"].append({
+            "startdatum": date_str(start - timedelta(days=15)),
+            "einddatum": date_str(start - timedelta(days=3)),
+            "datumAanvraag": date_str(start - timedelta(days=2))
+        })
+
     # planVanAanpak
     if neemmee():
         traject["planVanAanpak"] = {
@@ -209,6 +226,7 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
 def generate_levering(
     teller: int,
     bsn_start: int,
+    elf_proef: bool,
     aantal_trajecten: int
 ) -> dict:
     variants = ["minimal", "lopend", "afgerond", "afgerond", "afgerond", "afwijzing", "crisis"]
@@ -232,7 +250,7 @@ def generate_levering(
         },
         "schuldhulptrajecten": [
             generate_traject(
-                bsn=str(next_bsn(bsn_start + 12*i)),
+                bsn=str(next_bsn(bsn_start + ((12 if elf_proef else 1))*i, elf_proef)),
                 gemeentecode = random.choice(gemeentecodes),
                 variant=random.choice(variants)
             )
@@ -253,8 +271,9 @@ data = {
         # Levering 1: BSN 900000000 – 900000099
         generate_levering(
             teller=1,
-            bsn_start=900000004,
-            aantal_trajecten=572
+            bsn_start=999900003,
+            elf_proef = True,   # bij meer dan ongeveer 1.500 testgevallen zijn er onvoldoende elfproef getallen om test-BSN's te maken
+            aantal_trajecten=1572
         )
         # Levering 2: overlap BSN 900000050 – 900000149 [even geen 2e levering, werkt toch niet in invoerapp]
 #        generate_levering(
@@ -269,7 +288,7 @@ data = {
 # Wegschrijven naar bestand
 # -------------------------------------------------
 
-output_path = "testbestand_schuldhulpverlening.json"
+output_path = "testbestand_schuldhulpverlening_" + TODAY.strftime("%Y%m%d") + ".json"
 
 with open(output_path, "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
