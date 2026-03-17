@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TableSortLabel, Paper, Dialog,
-  DialogTitle, DialogContent, List, ListItemButton, ListItemText
+  DialogTitle, DialogContent, List, ListItemButton, ListItemIcon, ListItemText
 } from '@mui/material';
 import { Typography } from '@mui/material';
 
@@ -394,14 +394,21 @@ const processtappen = [
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
-          <List>
-          <ListItemText
-            style={{color: "black", backgroundColor: "lightgrey", fontWeight: "bolder"}}
-            primary={
-              `==  Gemeentecode | BSN | Omschrijving  ==`
-            }
-          />
-            {selectedTrajectList.map(({ traject, originalIndex }) => (
+        <Typography
+          variant="subtitle2"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '4px 16px',
+            backgroundColor: '#f5f5f5',
+            fontWeight: 600
+          }}
+        >
+          <span style={{ width: 15 }} />
+          Gemeentecode | BSN | Omschrijving
+        </Typography>
+        <List>
+            {selectedTrajectList.map(({ traject, originalIndex }, i) => (
               <ListItemButton
                 key={originalIndex}
                 button
@@ -411,11 +418,24 @@ const processtappen = [
                   setDialogOpen(false);
                 }}
               >
-                <ListItemText
+              <ListItemIcon
+                style={{
+                  minWidth: 25,
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  fontSize: 'small'
+                }}
+              >
+                {i + 1}.
+              </ListItemIcon>
+              <ListItemText
                   primary={
                     `${traject.gemeentecode || 'gemeente onbekend'} | ${traject.client?.[0]?.Burgerservicenummer || 'BSN onbekend'} | ${traject.omschrijving?.trim() || 'geen omschrijving'}`
                   }
-                />
+                  primaryTypographyProps={{
+                    variant: 'subtitle2'
+                  }}
+              />
               </ListItemButton>
             ))}
           </List>
