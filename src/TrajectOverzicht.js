@@ -160,7 +160,8 @@ const processtappen = [
       const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
 
       if (start > eindLevering) return;
-      if ((eind && eind < startLevering) || (stap === "uitstroom" && start < startLevering)) return;
+      // als een stap al is afgerond voor de rapportageperiode, wordt die genegeerd - uitgecommentarieerd omdat het op-orde rapport dit niet doet!
+      // if ((eind && eind < startLevering) || (stap === "uitstroom" && start < startLevering)) return;
 
       if (!laatsteStart || start >= laatsteStart) {
         laatsteStart = start;
