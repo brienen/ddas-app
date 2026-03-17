@@ -16,7 +16,7 @@ async function generateFilename(data) {
   const sanitizedOrganisatieNaam = organisatieNaam.replace(/[[&/#, +()$~%.'":@^*?<>{}]/g, '_');
 
   // periode in bestandsnaam
-  if (startLevering == "" || eindLevering == "") {
+  if (startLevering === "" || eindLevering === "") {
     console.warn('Geen start- en/of einddatum levering gevonden - standaardwaarde wordt gebruikt');
     const { startdatumLevering, einddatumLevering } = getLastHalfYearRange();
     startLevering = startdatumLevering;
@@ -25,7 +25,7 @@ async function generateFilename(data) {
   const startdatum = new Date(startLevering.substring(0,4), parseInt(startLevering.substring(5,7)) - 1, startLevering.substring(8,10));
   const einddatum = new Date(eindLevering.substring(0,4), parseInt(eindLevering.substring(5,7)) - 1, eindLevering.substring(8,10));
   let jaar = "";
-  if ((einddatum.getFullYear() != startdatum.getFullYear()) && (einddatum.getMonth() > (11 - startdatum.getMonth()))) {
+  if ((einddatum.getFullYear() !== startdatum.getFullYear()) && (einddatum.getMonth() > (11 - startdatum.getMonth()))) {
     jaar = einddatum.getFullYear();
   } else {
     jaar = startdatum.getFullYear();

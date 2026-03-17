@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TableSortLabel, Paper, Dialog,
-  DialogTitle, DialogContent, List, ListItem, ListItemButton, ListItemText
+  DialogTitle, DialogContent, List, ListItemButton, ListItemText
 } from '@mui/material';
 import { Typography } from '@mui/material';
 
@@ -160,9 +160,9 @@ const processtappen = [
       const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
 
       if (start > eindLevering) return;
-      if ((eind && eind < startLevering) || stap == "uitstroom" && start < startLevering) return;
+      if ((eind && eind < startLevering) || (stap === "uitstroom" && start < startLevering)) return;
 
-      if (!laatsteStart || start > laatsteStart) {
+      if (!laatsteStart || start >= laatsteStart) {
         laatsteStart = start;
         laatsteStap = stap;
       }
@@ -205,14 +205,6 @@ const processtappen = [
     setDialogTitle(titel);
     setSelectedTrajectList(trajectenLijst);
     setDialogOpen(true);
-  };
-
-  const handleTrajectClick = (index) => {
-    if (setCurrentTrajectIndex && setActiveTab) {
-      setCurrentTrajectIndex(index);
-      setActiveTab('schuldhulptrajecten');
-    }
-    setDialogOpen(false);
   };
 
   return (
@@ -284,7 +276,7 @@ const processtappen = [
                             originalIndex: i
                           }));
                           openTrajectenDialog(
-                            `Trajecten voor categorie ${cat} (${code})`,
+                            `Trajecten voor categorie "${cat}" (gemeente ${code}) (klik op traject om daarheen te gaan)`,
                             trajectenVoorCategorie
                           );
                         },
@@ -365,7 +357,7 @@ const processtappen = [
                         {...(bijbehorendeTrajecten.length > 0 && {
                           onClick: () =>
                             openTrajectenDialog(
-                              `Trajecten voor stap ${stap} in ${gemeente}`,
+                              `Trajecten voor stap "${stap}" (gemeente ${gemeente}) (klik op traject op daarheen te gaan)`,
                               bijbehorendeTrajecten
                             ),
                           title: "Klik om de bijbehorende trajecten te bekijken",
@@ -403,8 +395,14 @@ const processtappen = [
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <List>
+          <ListItemText
+            style={{color: "black", backgroundColor: "lightgrey", fontWeight: "bolder"}}
+            primary={
+              `==  Gemeentecode | BSN | Omschrijving  ==`
+            }
+          />
             {selectedTrajectList.map(({ traject, originalIndex }) => (
-              <ListItem
+              <ListItemButton
                 key={originalIndex}
                 button
                 onClick={() => {
@@ -415,10 +413,10 @@ const processtappen = [
               >
                 <ListItemText
                   primary={
-                    `${traject.gemeentecode || 'gemeente onbekend'} - ${traject.client?.[0]?.Burgerservicenummer || 'BSN onbekend'} - ${traject.omschrijving?.trim() || 'geen omschrijving'}`
+                    `${traject.gemeentecode || 'gemeente onbekend'} | ${traject.client?.[0]?.Burgerservicenummer || 'BSN onbekend'} | ${traject.omschrijving?.trim() || 'geen omschrijving'}`
                   }
                 />
-              </ListItem>
+              </ListItemButton>
             ))}
           </List>
         </DialogContent>
