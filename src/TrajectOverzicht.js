@@ -5,7 +5,7 @@ import {
   DialogTitle, DialogContent, List, ListItemButton, ListItemIcon, ListItemText
 } from '@mui/material';
 import { Typography } from '@mui/material';
-
+import './MainForm.css';
 
 const CATEGORIEEN = [
   'Lopend traject, beëindigd',
@@ -389,7 +389,7 @@ const processtappen = [
       </TableContainer>
 
       <div style={{ marginTop: '1em' }}>
-        LET OP: dit zijn de totalen van de ingevoerde gegevens. Na indienen bij het CBS wordt een "op orde" rapport gegenereerd met een meer gedetailleerde terugkoppeling. Op basis van dat rapport kunt u besluiten om de gegevens alsnog in te trekken voordat deze verwerkt worden.
+        <span className="vet">LET OP:</span> de getoonde totalen zijn gebaseerd op de gegevens die je hebt ingevoerd of geüpload. Nadat je het bestand bij het CBS hebt ingediend, ontvang je een gedetailleerder ‘op-orde-rapport’. Op basis daarvan kun je besluiten de gegevens weer in te trekken voordat ze worden verwerkt. Het CBS publiceert jouw gegevens pas na jouw goedkeuring.
       </div>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>

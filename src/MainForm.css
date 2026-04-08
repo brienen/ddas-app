@@ -21,3 +21,13 @@
   font-family: "Material Symbols Outlined";
   content: "\eae6"; /*keyboard_control_key - NB: moet in aanroep Google Symbols in index.html zitten! */
 }
+
+.vet {
+  font-weight: bold;
+}
+.vetgroot {
+  font-weight: bold;
+  font-size: large;
+  border-top: solid 1px lightgrey;
+  padding-top: 15px;
+}

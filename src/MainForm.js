@@ -5,7 +5,7 @@ import { Tabs, Tab, Button } from 'react-bootstrap';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { materialRenderers, materialCells } from '@jsonforms/material-renderers';
 import DDAS_logo from './DDAS_logo_org.png';
-import './RegistrationForm.css';
+import './MainForm.css';
 
 import { validateJSON } from './validation';
 import { downloadJSON } from './downloadJSON';
@@ -223,7 +223,7 @@ const createEmptyTraject = () => ({
   schulden: [{}],              // 1 lege schuld
 });
 
-function RegistrationForm() {
+function MainForm() {
 
   const [formAlgemeen, setFormAlgemeen] = useState(null);
   const [formLevering, setFormLevering] = useState(null);
@@ -430,7 +430,7 @@ function RegistrationForm() {
   return (
     <div>
       <img className="logo" src={DDAS_logo} alt=""/>
-      <h1>DDAS-Invoerapp</h1>
+      <h1>DDAS-app</h1>
 
       <div className="container mt-4">
 
@@ -439,31 +439,60 @@ function RegistrationForm() {
 
             <Tab eventKey="start" title="Start">
               <div className="p-3 border rounded bg-light">
-              <h2>Welkom bij de DDAS-Invoerapp</h2>
-              <p>In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS, zodat op landelijk en gemeentelijk niveau inzicht ontstaat in de stand van zaken rond schuldhulpverlening. Kijk voor meer informatie <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden" target="_blank" title="open project website (in nieuw venster)" rel="noopener noreferrer">op de project-website</a>.<br />
-              Met deze app is het mogelijk om met de hand schuldhulpverleningsinformatie conform de DDAS-uitwisselspecificatie op te stellen. Wat er in de verschillende velden ingevoerd moet worden is vastgelegd in <a href="https://vng-realisatie.github.io/ddas/v1.0/definities/Detail_Model%20Schuldhulpverlening/" target="_blank" title="open informatiemodel met definities (in nieuw venster)" rel="noopener noreferrer">het informatiemodel voor DDAS</a>.</p>
-              <p>Loop je tegen problemen aan? Werkt de invoerapp niet zoals verwacht? Of heb je suggesties voor verbeteringen?<br />
-              Neem dan contact met ons op via het e-mailadres <a href="mailto:ddas@vng.nl" title="zend een bericht naar het project">ddas@vng.nl</a>.</p>
-              <h2>Hoe werkt de invoerapp?</h2>
-              <p>Deze app heeft naast dit startscherm twee tabbladen om de benodigde gegevens in te vullen. En daarnaast een tabblad waar je de ingevoerde gegevens kan controleren en in het vereiste JSON formaat kunt downloaden. Dit gedownloade JSON-bestand kan je vervolgens bij het <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank" rel="noopener noreferrer">CBS-portaal</a> uploaden. Je kan er ook later verder aan werken door het <a href="#upload" title="ga naar uploadveld">hieronder</a> in te laden.</p>
-              <p>Handig bij het invoeren:
+              <h2>Welkom bij de DDAS-app</h2>
+              <p>
+                In het kader van DDAS leveren gemeenten en andere schuldhulporganisaties gegevens aan het CBS. Kijk voor meer informatie over DDAS <a href="https://www.divosa.nl/ddas/" target="_blank" title="open project website (in nieuw venster)" rel="noopener noreferrer">op de project-website</a>.
+              </p>
+              <p>
+                <div className="vetgroot">Wat kun je met deze app?</div>
                 <ul>
-                  <li>Voor de leesbaarheid zijn groepen velden samengevoegd en kan je ze tonen of verbergen door op het pijltje naast de titel te klikken.</li>
-                  <li>Bij sommige velden kan je meer dan 1 item toevoegen. Klik op het plusteken naast de titel van het veld om een item toe te voegen. Reeds toegevoegde items kunnen verwijderd worden door op het prullenbak-teken naast het item te klikken.</li>
-                  <li>Bij de schuldhulptrajecten start je met het eerste traject. Om een traject toe te voegen, klik je op "NIEUW TRAJECT" rechtsboven. Met de knoppen "vorig traject" en "volgend traject" kan je naar de andere trajecten navigeren.</li>
+                  <li className="vet">Handmatig gegevensbestand aanmaken</li>
+                  Gebruikt jouw organisatie geen <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden/ddas-en-softwareleveranciers" target="_blank" title="zie lijst bekende gekoppelde systemen (in nieuw venster)" rel="noopener noreferrer">software die is gekoppeld aan DDAS</a> en heb je minder dan 50 schuldhulpdossiers? Dan kun je met de DDAS-app handmatig een bestand opstellen en bewerken. Raadpleeg het <a href="https://vng-realisatie.github.io/ddas/v1.0/definities/Detail_Model%20Schuldhulpverlening/" target="_blank" title="ga naar het informatiemodel (in nieuw venster)" rel="noopener noreferrer">informatiemodel voor DDAS</a> voor de details over de invoervelden.
+                  <li className="vet">Gegevensbestand controleren</li>
+                  Met de DDAS-app kun je automatisch gegenereerde bestanden uit je eigen schuldhulpsoftware controleren voordat je ze naar het CBS verstuurt. Zo weet je of de gegevens overeenkomen met je eigen registratie.<br />
+                  <br />
+                  Alle trajecten in het bestand worden op twee manieren ingedeeld:
+                  <ul>
+                    <li><span className="vet">Op periode:</span> Er wordt gekeken naar de start- en einddatum in relatie tot de rapportageperiode. Dit betreft trajecten die vóór of tijdens deze periode zijn gestart, ongeacht of ze al zijn beëindigd. Trajecten die volledig buiten de rapportageperiode vallen, tellen niet mee.</li>
+                    <li><span className="vet">Op fase:</span> Conform de werkwijze van het ‘op-orde-rapport’ krijgt een traject de fase toegewezen waarvan de meest recente startdatum binnen de rapportageperiode valt.</li>
+                  </ul>
                 </ul>
               </p>
-              <p>Deze app is (in deze versie) enkel getest in Chrome, Edge en Safari.</p>
-              <hr />
-              <p><strong>LET OP: als je deze pagina ververst of verlaat, dan worden alle velden leeg gemaakt!</strong><br />
-              Sla daarom tussentijds de ingevoerde gegevens op in een JSON-bestand. Deze kan later weer ingeladen worden om er verder aan te werken.</p>
-              <hr />
-              <h2 id="upload">Inladen eerder opgeslagen gegevens</h2>
-              <p>Als je een JSON-bestand hebt met eerder ingevoerde gegevens, waar je verder aan wilt werken, dan kun je dat via onderstaande knop inladen.<br />
-              <strong>Let op: als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.</strong></p>
+              <p>
+                <div className="vetgroot">Veiligheid van de gegevens</div>
+                De DDAS-app is ontwikkeld met aandacht voor gegevensveiligheid. Wanneer je een bestand maakt of uploadt, gebeurt dat volledig binnen je eigen webbrowser. De gegevens blijven lokaal op je computer; ze worden niet online opgeslagen en niet gedeeld met andere partijen.
+              </p>
+              <p>
+                <div className="vetgroot">Hoe werkt de DDAS-app?</div>
+                <ul>
+                  <li><span className="vet">Gegevens invullen:</span> Voer de benodigde gegevens in op de tabbladen Algemene gegevens en Schuldhulptrajecten.</li>
+                  <li><span className="vet">Controleren en downloaden:</span> Controleer de gegevens op het tabblad Totalen en opslaan. Download ze vervolgens als JSON-formaat. Dit bestand kun je uploaden bij het CBS-portaal Armoede en Schulden.</li>
+                  <li><span className="vet">Bestand uploaden:</span> Wil je een (automatisch gegenereerd) bestand controleren of op een later moment verder met je werk? Laad het JSON-bestand hieronder in.</li>
+                </ul>
+              </p>
+              <p>
+                <div className="vetgroot">Handig bij het invoeren</div>
+                <ul>
+                  <li>Invulvelden zijn gegroepeerd. Klik op het pijltje naast een titel om een groep velden te tonen of te verbergen.</li>
+                  <li>Bij sommige velden kun je meer dan 1 item toevoegen. Klik op het plusteken naast de titel van het veld om een item toe te voegen.Verwijderen kan via het prullenbak-icoon.</li>
+                  <li>Bij de schuldhulptrajecten start je met het eerste traject. Een nieuw traject voeg je rechtsboven toe via ‘NIEUW TRAJECT’. Om een traject toe te voegen, klik je op "NIEUW TRAJECT" rechtsboven. Met de knoppen ‘vorig traject’ en ‘volgend traject’ navigeer je tussen trajecten.</li>
+                </ul>
+              </p>
+              <p>
+                <div className="vetgroot">LET OP:</div> Ververs of verlaat je een pagina? Dan worden alle velden gewist. Sla je gegevens daarom regelmatig op door een JSON-bestand te downloaden. Je kunt dit bestand later weer inladen om verder te werken.
+              </p>
+              <p>
+                <div className="vetgroot">Hulp nodig of suggesties?</div>
+                Loop je tegen problemen aan, werkt de app niet zoals verwacht of heb je suggesties voor verbeteringen? Neem dan contact met ons op via <a href="mailto:ddas@vng.nl">ddas@vng.nl</a>.<br />
+                Deze app is getest in Chrome, Edge en Safari.
+              </p>
+              <p>
+                <div className="vetgroot">Uploaden JSON-bestand</div>
+                Wil je een (automatisch gegenereerd) bestand controleren of verder met eerder ingevoerde gegevens? Laad het JSON-bestand hieronder in.<br />
+                <span className="vet">LET OP:</span> als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.<br />
               <input type="file" accept="application/json" onChange={handleFileUpload} className="btn btn-outline-primary" />
               <span className="uploadResultaat" id="uploadResultaat"></span>
-              <br/>
+              </p>
               <hr />
               <p>Druk op "volgend tabblad" om te starten met het in- en/of aanvullen van de benodigde informatie.</p>
                 <div className="d-flex justify-content-between mt-3">
@@ -500,7 +529,12 @@ function RegistrationForm() {
                   />
                   </ThemeProvider>
                 <h2>Gegevens over deze levering</h2>
-                <p>Over welke periode worden gegevens over schuldhulptrajecten aangeleverd? Alle schuldhulptrajecten die tijdens deze periode actief waren (dus gestart voor de einddatum levering en nog niet afgerond of afgerond na de startdatum levering) moeten meegenomen worden bij "Schuldhulptrajecten".<br />
+                <p>Over welke periode worden gegevens over schuldhulptrajecten aangeleverd?<br />
+                Neem alle trajecten op die tijdens deze periode actief waren. Dat zijn trajecten die:
+                <ul>
+                  <li>nog niet afgerond zijn of pas afgerond zijn ná de startdatum van deze levering;</li>
+                  <li>gestart tijdens of vóór de einddatum van deze levering.</li>
+                </ul>
                 NB: De Code Gegevensleverancier kan niet gewijzigd worden, maar is nodig voor de verwerking.</p>
                 <ThemeProvider theme={theme}>
                   <JsonForms
@@ -535,7 +569,7 @@ function RegistrationForm() {
             <Tab eventKey="schuldhulptrajecten" title="Schuldhulptrajecten">
               <div className="p-3 border rounded bg-light">
                 <h2>Schuldhulptrajecten</h2>
-                <p>Vul de gegevens in met betrekking tot schuldhulptrajecten die je wilt aanbieden. Vul steeds per client (of 2 clienten als ze gezamenlijk aansprakelijk zijn) de gegevens in van het schuldhulptraject wat hij/zij doorloopt, of heeft doorlopen. Zijn er meer cliënten maak dan nieuwe schuldhulptraject aan.</p>
+                <p>Voer hier de gegevens in van de trajecten die je in het bestand wilt opnemen. Maak voor iedere cliënt (of twee cliënten als ze gezamenlijk aansprakelijk zijn) een schuldhulptraject aan.</p>
                 <div className="d-flex justify-content-between mt-3">
                   <Button variant="outline-primary"
                     onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
@@ -648,7 +682,7 @@ function RegistrationForm() {
                   <Button variant="primary" onClick={handleDownload} title="Sla de ingevoerde gegevens op in JSON-bestand">Download JSON-bestand</Button>
                   <span className="uploadResultaat" id="downloadResultaat"></span>
                 </p>
-                <p>Als de gegevens zijn opgeslagen zonder foutmeldingen, dan kan deze aan CBS aangeboden worden in hun <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank" rel="noopener noreferrer">portaal Armoede en Schulden</a>.<br />
+                <p>Zodra de gegevens zonder foutmeldingen zijn opgeslagen, dan kan deze aan CBS aangeboden worden in hun <a href="https://www.cbs.nl/nl-nl/deelnemers-enquetes/bedrijven/overzicht-bedrijven/armoede-en-schulden" target="_blank" rel="noopener noreferrer">portaal Armoede en Schulden</a>.<br />
                 De gegevens kunnen ook later in deze applicatie ingelezen worden om verder bewerkt te worden.</p>
                 <hr />
                 <div className="d-flex justify-content-between mt-3">

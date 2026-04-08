@@ -9,7 +9,7 @@ function App() {
     <div>
       <GlobalStyle />
       <CssBaseline />
-      <RegistrationForm />
+      <MainForm />
     </div>
   );
 }
