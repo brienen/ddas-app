@@ -450,7 +450,6 @@ function MainForm() {
                   Gebruikt jouw organisatie geen <a href="https://www.divosa.nl/projecten/data-delen-armoede-en-schulden/ddas-en-softwareleveranciers" target="_blank" title="zie lijst bekende gekoppelde systemen (in nieuw venster)" rel="noopener noreferrer">software die is gekoppeld aan DDAS</a> en heb je minder dan 50 schuldhulpdossiers? Dan kun je met de DDAS-app handmatig een bestand opstellen en bewerken. Raadpleeg het <a href="https://vng-realisatie.github.io/ddas/v1.0/definities/Detail_Model%20Schuldhulpverlening/" target="_blank" title="ga naar het informatiemodel (in nieuw venster)" rel="noopener noreferrer">informatiemodel voor DDAS</a> voor de details over de invoervelden.
                   <li className="vet">Gegevensbestand controleren</li>
                   Met de DDAS-app kun je automatisch gegenereerde bestanden uit je eigen schuldhulpsoftware controleren voordat je ze naar het CBS verstuurt. Zo weet je of de gegevens overeenkomen met je eigen registratie.<br />
-                  <br />
                   Alle trajecten in het bestand worden op twee manieren ingedeeld:
                   <ul>
                     <li><span className="vet">Op periode:</span> Er wordt gekeken naar de start- en einddatum in relatie tot de rapportageperiode. Dit betreft trajecten die vóór of tijdens deze periode zijn gestart, ongeacht of ze al zijn beëindigd. Trajecten die volledig buiten de rapportageperiode vallen, tellen niet mee.</li>

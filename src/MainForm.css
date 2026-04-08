@@ -12,7 +12,7 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%); /* Verticaal centreren */
-  font-size: 14px; /* Pas de grootte aan als nodig */
+  font-size: 1rem; /* Pas de grootte aan als nodig */
   color: #333; /* Kleur van het teken */
   transition: transform 0.3s; /* Optionele animatie bij toggle */
 }
@@ -29,5 +29,5 @@
   font-weight: bold;
   font-size: large;
   border-top: solid 1px lightgrey;
-  padding-top: 15px;
+  padding-top: 1.1rem;
 }

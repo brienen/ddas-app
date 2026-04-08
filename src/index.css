@@ -1,4 +1,7 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&icon_names=chevron_right,keyboard_control_key&display=block'); /* icoontjes voor uit- en inklappen van groepen */
+html {
+  font-size: 14px;  /* basisgrootte voor font - is 1rem */
+}
 body {
   margin: 0;
   font-family: 'Manrope', sans-serif;
