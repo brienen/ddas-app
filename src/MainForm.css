@@ -31,3 +31,6 @@
   border-top: solid 1px lightgrey;
   padding-top: 1.1rem;
 }
+.klein {
+  font-size: smaller;
+}

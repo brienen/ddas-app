@@ -7,31 +7,26 @@ import {
 import { Typography } from '@mui/material';
 import './MainForm.css';
 
-const CATEGORIEEN = [
-  'Lopend traject, beëindigd',
-  'Nieuw traject, beëindigd',
-  'Lopend traject, nog actief',
-  'Nieuw traject, nog actief',
-  'Buiten rapportageperiode',
-  'Onbekend'
-];
-
 const processtappen = [
   "aanmelding",
   "intake",
-  "planVanAanpak",
   "stabilisatie",
-  "oplossing",
   "schuldregeling",
+  "oplossing",
   "nazorg",
   "uitstroom",
-  "onbekend"
+  "onbekend*"
 ];
 
-  const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, setActiveTab }) => {
-
+const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, setActiveTab }) => {
   const formatDatum = (d) =>
-    d ? new Intl.DateTimeFormat('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d)) : 'onbekend';
+    d
+      ? new Intl.DateTimeFormat('nl-NL', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }).format(new Date(d))
+      : 'onbekend*';
 
   const [sortKey, setSortKey] = useState('gemeentecode');
   const [sortDirection, setSortDirection] = useState('asc');
@@ -62,143 +57,6 @@ const processtappen = [
   const startLevering = parseDate(formAlgemeen.startdatumLevering);
   const eindLevering = parseDate(formAlgemeen.einddatumLevering);
 
-  const overzicht = {};
-  const trajectIndexPerCodeCat = {};
-
-  trajecten.forEach((traject, index) => {
-    const code = traject?.gemeentecode || 'onbekend';
-    const start = parseDate(traject.startdatum);
-    const eind = parseDate(traject.einddatum);
-
-    let categorie = CATEGORIEEN[5];
-    if (start) {
-      const startVoor = start < startLevering;
-      const startNa = start >= startLevering;
-      const startTelaat = start && start > eindLevering;
-      const eindVoor = eind && eind <= eindLevering;
-      const eindNaOfGeen = !eind || eind > eindLevering;
-      const eindTevroeg = eind && eind < startLevering;
-
-      if (startTelaat || eindTevroeg) categorie = CATEGORIEEN[4];
-      else if (startVoor && eindVoor) categorie = CATEGORIEEN[0];
-      else if (startNa && eindVoor) categorie = CATEGORIEEN[1];
-      else if (startVoor && eindNaOfGeen) categorie = CATEGORIEEN[2];
-      else if (startNa && eindNaOfGeen) categorie = CATEGORIEEN[3];
-    }
-
-    if (!overzicht[code]) {
-      overzicht[code] = Object.fromEntries(CATEGORIEEN.map((c) => [c, 0]));
-      trajectIndexPerCodeCat[code] = Object.fromEntries(CATEGORIEEN.map((c) => [c, []]));
-    }
-
-    overzicht[code][categorie]++;
-    trajectIndexPerCodeCat[code][categorie].push(index);
-
-  });
-
-  const totalTrajectenPerCode = (telling) =>
-    CATEGORIEEN.reduce((sum, cat) => sum + (telling[cat] || 0), 0);
-
-  const sortedCodes = Object.keys(overzicht).sort((a, b) => {
-    const aValue =
-      sortKey === 'gemeentecode'
-        ? a
-        : sortKey === 'totaal'
-          ? totalTrajectenPerCode(overzicht[a])
-          : overzicht[a][sortKey];
-
-    const bValue =
-      sortKey === 'gemeentecode'
-        ? b
-        : sortKey === 'totaal'
-          ? totalTrajectenPerCode(overzicht[b])
-          : overzicht[b][sortKey];
-
-    if (typeof aValue === 'string') {
-      return sortDirection === 'asc'
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    } else {
-      return sortDirection === 'asc'
-        ? aValue - bValue
-        : bValue - aValue;
-    }
-  });
-
-  const trajectenPerGemeente = {};
-  trajecten.forEach((traject) => {
-    const code = traject.gemeentecode || "onbekend";
-    if (!trajectenPerGemeente[code]) {
-      trajectenPerGemeente[code] = [];
-    }
-    trajectenPerGemeente[code].push(traject);
-  });
-
-// Bepaal laatste stap van een traject
-  const bepaalLaatsteStap = (traject) => {
-    let laatsteStap = null;
-    let laatsteStart = null;
-
-    processtappen.forEach((stap) => {
-      if (stap === "onbekend") return;
-
-      let stapData = traject[stap];
-      if (!stapData) return;
-
-      if (Array.isArray(stapData)) {
-        stapData = stapData[stapData.length - 1];
-      }
-
-      const startDatum =
-        stapData.startdatum ??
-        stapData.datumAfronding ??
-        stapData.datum;
-
-      if (!startDatum) return;
-
-      const start = new Date(startDatum);
-      const eind = stapData.einddatum ? new Date(stapData.einddatum) : null;
-
-      if (start > eindLevering) return;
-      // als een stap al is afgerond voor de rapportageperiode, wordt die genegeerd - uitgecommentarieerd omdat het op-orde rapport dit niet doet!
-      // if ((eind && eind < startLevering) || (stap === "uitstroom" && start < startLevering)) return;
-
-      if (!laatsteStart || start >= laatsteStart) {
-        laatsteStart = start;
-        laatsteStap = stap;
-      }
-    });
-
-    return laatsteStap ?? "onbekend";
-  };
-
-  const tellingPerGemeenteEnStap = {};
-  Object.entries(trajectenPerGemeente).forEach(([gemeente, lijst]) => {
-    const telling = {};
-
-    processtappen.forEach((stap) => {
-      telling[stap] = 0;
-    });
-
-    lijst.forEach((traject) => {
-      const laatsteStap = bepaalLaatsteStap(traject);
-
-      if (laatsteStap) {
-        telling[laatsteStap]++;
-      }
-    });
-
-    tellingPerGemeenteEnStap[gemeente] = telling;
-  });
-
-  const processtapTellingen = {};
-
-  processtappen.forEach((stap) => {
-    processtapTellingen[stap] = trajecten.filter((traject) => {
-      return bepaalLaatsteStap(traject) === stap;
-    }).length;
-  });
-
   const stapLabel = (naam) =>
     naam.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (s) => s.toUpperCase());
 
@@ -208,6 +66,236 @@ const processtappen = [
     setDialogOpen(true);
   };
 
+  const datumInPeriode = (datum) => {
+    if (!datum) return false;
+    const d = new Date(datum);
+    return d >= startLevering && d <= eindLevering;
+  };
+
+  const clientIsActiefInTraject = (traject) => {
+    return processtappen.some((stap) => {
+      let stapData = traject[stap];
+      if (!stapData) return false;
+
+      const items = Array.isArray(stapData) ? stapData : [stapData];
+
+      return items.some((item) => {
+        if (!item) return false;
+
+        const relevanteDatum =
+          stap === 'uitstroom'
+            ? (item.datum ?? item.datumAfronding ?? item.startdatum)
+            : (item.startdatum ?? item.datum ?? item.datumAfronding);
+
+        return datumInPeriode(relevanteDatum);
+      });
+    });
+  };
+
+  const trajectenPerGemeente = {};
+  trajecten.forEach((traject) => {
+    const code = traject?.gemeentecode || 'onbekend*';
+    if (!trajectenPerGemeente[code]) {
+      trajectenPerGemeente[code] = [];
+    }
+    trajectenPerGemeente[code].push(traject);
+  });
+
+  // Eerste tabel: aantal trajecten en unieke actieve cliënten per gemeente
+  const gemeenteOverzicht = {};
+
+  trajecten.forEach((traject, index) => {
+    const gemeente = traject?.gemeentecode || 'onbekend*';
+
+    if (!gemeenteOverzicht[gemeente]) {
+      gemeenteOverzicht[gemeente] = {
+        trajectenAantal: 0,
+        trajectIndices: [],
+        alleClientBSNs: new Set(),
+        actieveClientBSNs: new Set(),
+        actieveClientTrajecten: new Set()
+      };
+    }
+
+    gemeenteOverzicht[gemeente].trajectenAantal += 1;
+    gemeenteOverzicht[gemeente].trajectIndices.push(index);
+
+    const trajectIsActief = clientIsActiefInTraject(traject);
+    const clients = Array.isArray(traject.client) ? traject.client : [];
+
+    clients.forEach((client) => {
+      const bsn = client?.Burgerservicenummer?.trim();
+      if (!bsn) return;
+
+      gemeenteOverzicht[gemeente].alleClientBSNs.add(bsn);
+
+      if (trajectIsActief) {
+        gemeenteOverzicht[gemeente].actieveClientBSNs.add(bsn);
+        gemeenteOverzicht[gemeente].actieveClientTrajecten.add(index);
+      }
+    });
+
+  });
+
+  const sortedGemeenten = Object.keys(gemeenteOverzicht).sort((a, b) => {
+    if (sortKey === 'gemeentecode') {
+      return sortDirection === 'asc'
+        ? a.localeCompare(b)
+        : b.localeCompare(a);
+    }
+
+    const aValue =
+      sortKey === 'trajecten'
+        ? gemeenteOverzicht[a].trajectenAantal
+        : sortKey === 'alleClienten'
+          ? gemeenteOverzicht[a].alleClientBSNs.size
+          : gemeenteOverzicht[a].actieveClientBSNs.size;
+
+    const bValue =
+      sortKey === 'trajecten'
+        ? gemeenteOverzicht[b].trajectenAantal
+        : sortKey === 'alleClienten'
+          ? gemeenteOverzicht[b].alleClientBSNs.size
+          : gemeenteOverzicht[b].actieveClientBSNs.size;
+
+    return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+  });
+
+  const totaalTrajecten = sortedGemeenten.reduce(
+    (sum, gemeente) => sum + gemeenteOverzicht[gemeente].trajectenAantal,
+    0
+  );
+  const totaalAlleClientenPerGemeente = sortedGemeenten.reduce(
+    (sum, gemeente) => sum + gemeenteOverzicht[gemeente].alleClientBSNs.size,
+    0
+  );
+
+// Totaal aantal unieke BSN's kan je over de hele set tellen (als 1 BSN in 2 gemeenten voorkomt, wordt die maar 1x geteld):
+//  const alleUniekeActieveBSNs = new Set();
+//  sortedGemeenten.forEach((gemeente) => {
+//    gemeenteOverzicht[gemeente].actieveClientBSNs.forEach((bsn) =>
+//      alleUniekeActieveBSNs.add(bsn)
+//    );
+//  });
+// In de tabel komt dit als: <TableCell align="center">{alleUniekeActieveBSNs.size}</TableCell>
+
+// of gewoon de aantallen per gemeente optellen
+  const totaalActieveClientenPerGemeente = sortedGemeenten.reduce(
+    (sum, gemeente) => sum + gemeenteOverzicht[gemeente].actieveClientBSNs.size,
+    0
+  );
+
+  // Tweede tabel: per cliënt alleen de meest recente stap in de rapportageperiode
+  const bepaalLaatsteStapVoorClient = (trajectenVanGemeente) => {
+    const clientLaatsteStap = {};
+
+    trajectenVanGemeente.forEach((traject) => {
+      const originalIndex = trajecten.findIndex((t) => t === traject);
+      if (originalIndex === -1) return;
+
+      const clients = Array.isArray(traject.client) ? traject.client : [];
+
+      clients.forEach((client) => {
+        const bsn = client?.Burgerservicenummer?.trim();
+        if (!bsn) return;
+
+        if (!clientLaatsteStap[bsn]) {
+          clientLaatsteStap[bsn] = {
+            stap: "onbekend*",
+            datum: null,
+            traject,
+            originalIndex
+          };
+        }
+
+        processtappen.forEach((stap) => {
+          if (stap === "onbekend*") return;
+
+          let stapData = traject[stap];
+          if (!stapData) return;
+
+          const items = Array.isArray(stapData) ? stapData : [stapData];
+
+          items.forEach((item) => {
+            if (!item) return;
+
+            const datum =
+              item.startdatum ??
+              item.datumAfronding ??
+              item.datum;
+
+            if (!datum) return;
+
+            const d = new Date(datum);
+            if (d < startLevering || d > eindLevering) return;
+
+            if (
+              !clientLaatsteStap[bsn].datum ||
+              d > clientLaatsteStap[bsn].datum
+            ) {
+              clientLaatsteStap[bsn] = {
+                stap,
+                datum: d,
+                traject,
+                originalIndex
+              };
+            }
+          });
+        });
+      });
+    });
+    return clientLaatsteStap;
+  };
+
+  const clientenPerGemeenteEnStap = {};
+  const trajectenPerGemeenteEnStap = {};
+  const totalenPerGemeente = {};
+
+  Object.entries(trajectenPerGemeente).forEach(([gemeente, lijst]) => {
+    const laatsteStapPerClient = bepaalLaatsteStapVoorClient(lijst);
+
+    const telling = {};
+    const trajectenPerStap = {};
+
+    processtappen.forEach((stap) => {
+      telling[stap] = 0;
+      trajectenPerStap[stap] = [];
+    });
+
+    Object.entries(laatsteStapPerClient).forEach(([bsn, info]) => {
+      const { stap, traject, originalIndex } = info;
+
+      if (telling[stap] !== undefined) {
+        telling[stap]++;
+
+        trajectenPerStap[stap].push({
+          traject,
+          originalIndex
+        });
+      }
+    });
+
+    clientenPerGemeenteEnStap[gemeente] = telling;
+    trajectenPerGemeenteEnStap[gemeente] = trajectenPerStap;
+    totalenPerGemeente[gemeente] = Object.keys(laatsteStapPerClient).length;
+  });
+
+  const totalenPerStap = {};
+  processtappen.forEach((stap) => {
+    totalenPerStap[stap] = 0;
+  });
+
+  Object.values(clientenPerGemeenteEnStap).forEach((telling) => {
+    processtappen.forEach((stap) => {
+      totalenPerStap[stap] += telling[stap];
+    });
+  });
+
+  const totaalAlleClienten = Object.values(totalenPerGemeente).reduce(
+    (sum, val) => sum + val,
+    0
+  );
+
   return (
     <div>
       <p style={{ fontSize: '0.9em' }}>
@@ -215,7 +303,7 @@ const processtappen = [
       </p>
 
       <Typography variant="h8" style={{ marginTop: "1em" }}>
-        Overzicht aantal trajecten per gemeentecode en status van het traject
+        Overzicht aantal trajecten en cliënten (BSN's) per gemeentecode
       </Typography>
 
       <TableContainer component={Paper}>
@@ -232,98 +320,117 @@ const processtappen = [
                 </TableSortLabel>
               </TableCell>
 
-              {CATEGORIEEN.map((cat) => (
-                <TableCell key={cat} align="center">
-                  <TableSortLabel
-                    active={sortKey === cat}
-                    direction={sortDirection}
-                    onClick={() => handleSort(cat)}
-                  >
-                    {cat}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
+              <TableCell align="center">
+                <TableSortLabel
+                  active={sortKey === 'trajecten'}
+                  direction={sortDirection}
+                  onClick={() => handleSort('trajecten')}
+                >
+                  Aantal trajecten
+                </TableSortLabel>
+              </TableCell>
 
               <TableCell align="center">
                 <TableSortLabel
-                  active={sortKey === 'totaal'}
+                  active={sortKey === 'alleClienten'}
                   direction={sortDirection}
-                  onClick={() => handleSort('totaal')}
+                  onClick={() => handleSort('alleClienten')}
                 >
-                  Totaal
+                  Unieke BSN's
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell align="center">
+                <TableSortLabel
+                  active={sortKey === 'actieveClienten'}
+                  direction={sortDirection}
+                  onClick={() => handleSort('actieveClienten')}
+                >
+                  Unieke actieve BSN's*
                 </TableSortLabel>
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {sortedCodes.map((code) => {
-              const telling = overzicht[code];
-              const totaal = totalTrajectenPerCode(telling);
+            {sortedGemeenten.map((gemeente) => {
+              const gegevens = gemeenteOverzicht[gemeente];
+
+              const alleTrajecten = gegevens.trajectIndices.map((i) => ({
+                traject: trajecten[i],
+                originalIndex: i
+              }));
+
+              const actieveClientTrajecten = Array.from(
+                gegevens.actieveClientTrajecten
+              ).map((i) => ({
+                traject: trajecten[i],
+                originalIndex: i
+              }));
+
               return (
-                <TableRow key={code}>
-                  <TableCell>{code}</TableCell>
-                  {CATEGORIEEN.map((cat) => (
-                    <TableCell
-                      key={cat}
-                      align="center"
-                      {...(telling[cat] > 0 && {
-                        onClick: () => {
-                          const indicesVoorCategorie = trajectIndexPerCodeCat[code]?.[cat] || [];
-//                          const trajectenVoorCategorie = indicesVoorCategorie.map(
-//                            (i) => trajecten[i]
-//                          );
-                          const trajectenVoorCategorie = indicesVoorCategorie.map((i) => ({
-                            traject: trajecten[i],
-                            originalIndex: i
-                          }));
-                          openTrajectenDialog(
-                            `Trajecten voor categorie "${cat}" (gemeente ${code}) (klik op traject om daarheen te gaan)`,
-                            trajectenVoorCategorie
-                          );
-                        },
-                        title: "Klik om de bijbehorende trajecten te bekijken",
-                        style: {
-                          cursor: "pointer",
-                          color: "blue",
-                          textDecoration: "underline"
-                        }
-                      })}
-                    >
-                      {telling[cat]}
-                    </TableCell>
-                  ))}
-                  <TableCell align="center">{totaal}</TableCell>
+                <TableRow key={gemeente}>
+                  <TableCell>{gemeente}</TableCell>
+
+                  <TableCell
+                    align="center"
+                    {...(gegevens.trajectenAantal > 0 && {
+                      onClick: () =>
+                        openTrajectenDialog(
+                          `Trajecten in gemeente ${gemeente} (klik op traject om daarheen te gaan)`,
+                          alleTrajecten
+                        ),
+                      title: "Klik om de bijbehorende trajecten te bekijken",
+                      style: {
+                        cursor: "pointer",
+                        color: "blue",
+                        textDecoration: "underline"
+                      }
+                    })}
+                  >
+                    {gegevens.trajectenAantal}
+                  </TableCell>
+
+                  <TableCell align="center">
+                    {gegevens.alleClientBSNs.size}
+                  </TableCell>
+
+                  <TableCell
+                    align="center"
+                    {...(gegevens.actieveClientBSNs.size > 0 && {
+                      onClick: () =>
+                        openTrajectenDialog(
+                          `Trajecten met actieve cliënten in gemeente ${gemeente} (klik op traject om daarheen te gaan)`,
+                          actieveClientTrajecten
+                        ),
+                      title: "Klik om de bijbehorende trajecten te bekijken",
+                      style: {
+                        cursor: "pointer",
+                        color: "blue",
+                        textDecoration: "underline"
+                      }
+                    })}
+                  >
+                    {gegevens.actieveClientBSNs.size}
+                  </TableCell>
                 </TableRow>
               );
             })}
+
             <TableRow>
               <TableCell><strong>Totaal</strong></TableCell>
-              {CATEGORIEEN.map((cat) => {
-                const totaalPerCategorie = Object.values(overzicht).reduce(
-                  (sum, telling) => sum + (telling[cat] || 0),
-                  0
-                );
-                return (
-                  <TableCell key={cat} align="center">
-                    {totaalPerCategorie}
-                  </TableCell>
-                );
-              })}
-              <TableCell align="center">
-                {Object.values(overzicht).reduce(
-                  (sum, telling) =>
-                    sum + CATEGORIEEN.reduce((catSum, cat) => catSum + (telling[cat] || 0), 0),
-                  0
-                )}
-              </TableCell>
+              <TableCell align="center"><strong>{totaalTrajecten}</strong></TableCell>
+                <TableCell align="center"><strong>{totaalAlleClientenPerGemeente}</strong></TableCell>
+              <TableCell align="center"><strong>{totaalActieveClientenPerGemeente}</strong></TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
+      <p className="klein">*: actief wil zeggen dat er een processtap tijdens de rapportageperiode is gestart of de cliënt tijdens de rapportageperiode is uitgestroomd</p>
 
       <Typography variant="h8" style={{ marginTop: "1em" }}>
         <br />
-        Overzicht aantal trajecten per processtap (actief op einddatum periode)
+        Overzicht unieke actieve cliënten per meest recente processtap
       </Typography>
 
       <TableContainer component={Paper} style={{ marginTop: "0em" }}>
@@ -334,59 +441,67 @@ const processtappen = [
               {processtappen.map((stap) => (
                 <TableCell key={stap} align="center">{stapLabel(stap)}</TableCell>
               ))}
+              <TableCell align="center"><strong>Totaal</strong></TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {Object.entries(tellingPerGemeenteEnStap).map(([gemeente, telling]) => (
+          {sortedGemeenten.map((gemeente) => {
+            const telling = clientenPerGemeenteEnStap[gemeente];
+
+            return (
               <TableRow key={gemeente}>
                 <TableCell>{gemeente}</TableCell>
-                {
-                  processtappen.map((stap) => {
-                    const bijbehorendeTrajecten = trajectenPerGemeente[gemeente]
-                      .map((traject) => {
-                        // 🔑 Zoek het originele indexnummer in de volledige set
-                        const originalIndex = trajecten.findIndex((t) => t === traject);
-                        return { traject, originalIndex };
-                      })
-                      .filter(({ traject }) => {
-                        return bepaalLaatsteStap(traject) === stap;
-                      });
-                    return (
-                      <TableCell
-                        key={stap}
-                        align="center"
-                        {...(bijbehorendeTrajecten.length > 0 && {
-                          onClick: () =>
-                            openTrajectenDialog(
-                              `Trajecten voor stap "${stap}" (gemeente ${gemeente}) (klik op traject op daarheen te gaan)`,
-                              bijbehorendeTrajecten
-                            ),
-                          title: "Klik om de bijbehorende trajecten te bekijken",
-                          style: {
-                            cursor: "pointer",
-                            color: "blue",
-                            textDecoration: "underline"
-                          }
-                        })}
-                      >
-                        {bijbehorendeTrajecten.length}
-                      </TableCell>
-                    );
-                  })
-                }
+
+                {processtappen.map((stap) => {
+                  const bijbehorendeTrajecten = trajectenPerGemeenteEnStap[gemeente][stap];
+
+                  return (
+                    <TableCell
+                      key={stap}
+                      align="center"
+                      {...(telling[stap] > 0 && {
+                        onClick: () =>
+                          openTrajectenDialog(
+                            `Cliënten in stap "${stap}" (gemeente ${gemeente})`,
+                            bijbehorendeTrajecten
+                          ),
+                        style: {
+                          cursor: "pointer",
+                          color: "blue",
+                          textDecoration: "underline"
+                        }
+                      })}
+                    >
+                      {telling[stap]}
+                    </TableCell>
+                  );
+                })}
+
+                <TableCell align="center">
+                  <strong>{totalenPerGemeente[gemeente]}</strong>
+                </TableCell>
               </TableRow>
-            ))}
+            );
+          })}
+
             <TableRow>
               <TableCell><strong>Totaal</strong></TableCell>
+
               {processtappen.map((stap) => (
                 <TableCell key={stap} align="center">
-                  {processtapTellingen[stap] || 0}
+                  <strong>{totalenPerStap[stap]}</strong>
                 </TableCell>
               ))}
+
+              <TableCell align="center">
+                <strong>{totaalAlleClienten}</strong>
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
+      <p className="klein">*: onbekend wil zeggen dat er geen processtap is gevonden die tijdens de rapportageperiode is gestart</p>
 
       <div style={{ marginTop: '1em' }}>
         <span className="vet">LET OP:</span> de getoonde totalen zijn gebaseerd op de gegevens die je hebt ingevoerd of geüpload. Nadat je het bestand bij het CBS hebt ingediend, ontvang je een gedetailleerder ‘op-orde-rapport’. Op basis daarvan kun je besluiten de gegevens weer in te trekken voordat ze worden verwerkt. Het CBS publiceert jouw gegevens pas na jouw goedkeuring.
@@ -395,48 +510,49 @@ const processtappen = [
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
-        <Typography
-          variant="subtitle2"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '4px 16px',
-            backgroundColor: '#f5f5f5',
-            fontWeight: 600
-          }}
-        >
-          <span style={{ width: 15 }} />
-          Gemeentecode | BSN | Omschrijving
-        </Typography>
-        <List>
+          <Typography
+            variant="subtitle2"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '4px 16px',
+              backgroundColor: '#f5f5f5',
+              fontWeight: 600
+            }}
+          >
+            <span style={{ width: 15 }} />
+            Gemeentecode | BSN | Omschrijving
+          </Typography>
+
+          <List>
             {selectedTrajectList.map(({ traject, originalIndex }, i) => (
               <ListItemButton
                 key={originalIndex}
-                button
                 onClick={() => {
                   setCurrentTrajectIndex(originalIndex);
                   setActiveTab("schuldhulptrajecten");
                   setDialogOpen(false);
                 }}
               >
-              <ListItemIcon
-                style={{
-                  minWidth: 25,
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  fontSize: 'small'
-                }}
-              >
-                {i + 1}.
-              </ListItemIcon>
-              <ListItemText
+                <ListItemIcon
+                  style={{
+                    minWidth: 25,
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    fontSize: 'small'
+                  }}
+                >
+                  {i + 1}.
+                </ListItemIcon>
+
+                <ListItemText
                   primary={
-                    `${traject.gemeentecode || 'gemeente onbekend'} | ${traject.client?.[0]?.Burgerservicenummer || 'BSN onbekend'} | ${traject.omschrijving?.trim() || 'geen omschrijving'}`
+                    `${traject.gemeentecode || 'gemeente onbekend*'} | ${traject.client?.[0]?.Burgerservicenummer || 'BSN onbekend*'} | ${traject.omschrijving?.trim() || 'geen omschrijving'}`
                   }
                   primaryTypographyProps={{
                     variant: 'subtitle2'
                   }}
-              />
+                />
               </ListItemButton>
             ))}
           </List>

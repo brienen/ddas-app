@@ -8,6 +8,8 @@ from datetime import date, timedelta
 
 TODAY = date.today()
 
+bsn_start=100000001
+
 def random_past_date(start_year: int = 2018) -> date:
     """
     Genereert een willekeurige datum in het verleden.
@@ -60,15 +62,36 @@ def next_bsn(n: int, elf_proef: bool) -> int:
 # Client
 # -------------------------------------------------
 
-def generate_client(bsn: str) -> dict:
+def generate_client(i: int, elf_proef: bool) -> dict:
     geslachten = ["M", "V", "O"]
-    return {
-        "Burgerservicenummer": bsn,
-        "Geboortedatum": "1982-05-23",
-        "Geslachtsaanduiding": random.choice(geslachten),
-        "Postcode": "2611 TV",
-        "Huisnummer": "55"
-    }
+    bsn=str(next_bsn(bsn_start + ((12 if elf_proef else 1))*i, elf_proef))
+
+    if neemmee(8):
+        cl = [{
+            "Burgerservicenummer": bsn,
+            "Geboortedatum": "1982-05-23",
+            "Geslachtsaanduiding": random.choice(geslachten),
+            "Postcode": "2611 TV",
+            "Huisnummer": "55"
+        }]
+    else:
+        bsn2 = str(next_bsn(bsn_start + ((12 if elf_proef else 1))*random.randint(1, 500), elf_proef))
+        cl = {
+                "Burgerservicenummer": bsn,
+                "Geboortedatum": "1982-05-23",
+                "Geslachtsaanduiding": random.choice(geslachten),
+                "Postcode": "2611 TV",
+                "Huisnummer": "55"
+            }, {
+                "Burgerservicenummer": bsn2,
+                "Geboortedatum": "1982-05-23",
+                "Geslachtsaanduiding": random.choice(geslachten),
+                "Postcode": "2611 TV",
+                "Huisnummer": "55"
+            }
+
+    return cl
+
 
 # -------------------------------------------------
 # Begeleiding
@@ -90,7 +113,7 @@ def generate_begeleiding(start: date) -> list[dict]:
     })
 
     # Optioneel lopende begeleiding
-    if random.random() < 0.5:
+    if neemmee(5):
         begeleiding.append({
             "soort": "Budgetbeheer",
             "startdatum": date_str(end1 + timedelta(days=1))
@@ -102,15 +125,15 @@ def generate_begeleiding(start: date) -> list[dict]:
 # Schuldhulptraject
 # -------------------------------------------------
 
-def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
+def generate_traject(gemeentecode: str, variant: str, i: int, elf_proef: bool) -> dict:
     """
     Genereert één schuldhulptraject volgens een variant.
     """
-    start = random_past_date()
+    start = random_past_date(2024)   # startdatum ergens tussen 2024 en nu
 
     traject = {
         "gemeentecode": gemeentecode,
-        "client": [generate_client(bsn)],
+        "client": generate_client(i, elf_proef),
         "startdatum": date_str(start)
     }
 
@@ -159,33 +182,33 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
     # planVanAanpak
     if neemmee():
         traject["planVanAanpak"] = {
-            "datumAfronding": date_str(start - timedelta(days=15))
+            "datumAfronding": date_str(start + timedelta(days=15))
         }
 
     # stabilisatie
     if neemmee():
         traject["stabilisatie"] = {
-            "startdatum": date_str(start - timedelta(days=15)),
-            "einddatum": date_str(start - timedelta(days=3))
+            "startdatum": date_str(start + timedelta(days=3)),
+            "einddatum": date_str(start + timedelta(days=30))
         }
 
     # schuldregeling
     if neemmee():
         traject["schuldregeling"] = {
-            "datum": date_str(start - timedelta(days=15))
+            "datum": date_str(start + timedelta(days=65))
         }
 
     # nazorg
     if neemmee():
         traject["nazorg"] = {
-            "startdatum": date_str(start - timedelta(days=15)),
-            "einddatum": date_str(start + timedelta(days=90))
+            "startdatum": date_str(start + timedelta(days=85)),
+            "einddatum": date_str(start + timedelta(days=120))
         }
 
     # informatieEnAdvies
     if neemmee(2):
         traject["informatieEnAdvies"] = {
-            "startdatum": date_str(start - timedelta(days=15)),
+            "startdatum": date_str(start + timedelta(days=5)),
             "einddatum": date_str(start + timedelta(days=90))
         }
 
@@ -195,7 +218,7 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
 
     # Afgerond traject
     if variant == "afgerond":
-        end = start + timedelta(days=random.randint(20, 500))
+        end = start + timedelta(days=random.randint(40, 500))
         traject["einddatum"] = date_str(end)
 
         traject["oplossing"] = {
@@ -225,7 +248,6 @@ def generate_traject(bsn: str, gemeentecode: str, variant: str) -> dict:
 
 def generate_levering(
     teller: int,
-    bsn_start: int,
     elf_proef: bool,
     aantal_trajecten: int
 ) -> dict:
@@ -250,9 +272,10 @@ def generate_levering(
         },
         "schuldhulptrajecten": [
             generate_traject(
-                bsn=str(next_bsn(bsn_start + ((12 if elf_proef else 1))*i, elf_proef)),
                 gemeentecode = random.choice(gemeentecodes),
-                variant=random.choice(variants)
+                variant=random.choice(variants),
+                i=i,
+                elf_proef=elf_proef
             )
             for i in range(aantal_trajecten)
         ]
@@ -271,9 +294,8 @@ data = {
         # Levering 1: BSN 900000000 – 900000099
         generate_levering(
             teller=1,
-            bsn_start=999900003,
-            elf_proef = True,   # bij meer dan ongeveer 1.500 testgevallen zijn er onvoldoende elfproef getallen om test-BSN's te maken
-            aantal_trajecten=1572
+            elf_proef = False,   # bij meer dan ongeveer 1.500 testgevallen zijn er onvoldoende elfproef getallen om test-BSN's te maken
+            aantal_trajecten=20000
         )
         # Levering 2: overlap BSN 900000050 – 900000149 [even geen 2e levering, werkt toch niet in invoerapp]
 #        generate_levering(
