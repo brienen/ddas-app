@@ -473,12 +473,13 @@ function MainForm() {
                 <div className="vetgroot">Handig bij het invoeren</div>
                 <ul>
                   <li>Invulvelden zijn gegroepeerd. Klik op het pijltje naast een titel om een groep velden te tonen of te verbergen.</li>
-                  <li>Bij sommige velden kun je meer dan 1 item toevoegen. Klik op het plusteken naast de titel van het veld om een item toe te voegen.Verwijderen kan via het prullenbak-icoon.</li>
-                  <li>Bij de schuldhulptrajecten start je met het eerste traject. Een nieuw traject voeg je rechtsboven toe via ‘NIEUW TRAJECT’. Om een traject toe te voegen, klik je op "NIEUW TRAJECT" rechtsboven. Met de knoppen ‘vorig traject’ en ‘volgend traject’ navigeer je tussen trajecten.</li>
+                  <li>Bij sommige velden kun je meer dan 1 item toevoegen. Klik op het plusteken naast de titel van het veld om een item toe te voegen. Verwijderen kan via het prullenbak-icoon.</li>
+                  <li>Bij de schuldhulptrajecten start je met het eerste traject. Een nieuw traject voeg je rechtsboven toe via ‘NIEUW TRAJECT’. Met de knoppen ‘vorig traject’ en ‘volgend traject’ navigeer je tussen trajecten. Een traject verwijderen kan met de knop 'verwijder dit traject' onder het traject.</li>
                 </ul>
               </p>
-              <p>
-                <div className="vetgroot">LET OP:</div> Ververs of verlaat je een pagina? Dan worden alle velden gewist. Sla je gegevens daarom regelmatig op door een JSON-bestand te downloaden. Je kunt dit bestand later weer inladen om verder te werken.
+              <p style={{ backgroundColor: 'white', border: 'solid 1px grey', padding: '3px', marginTop: '10px' }}>
+                <div style={{fontSize: 'large', fontWeight: 'bold'}}>LET OP!</div> <span className="vet">Ververs of verlaat je een pagina? Dan worden alle velden gewist.</span><br />
+                Sla je gegevens daarom regelmatig op door een JSON-bestand te downloaden. Je kunt dit bestand later weer inladen om verder te werken.
               </p>
               <p>
                 <div className="vetgroot">Hulp nodig of suggesties?</div>
@@ -489,7 +490,7 @@ function MainForm() {
                 <div className="vetgroot">Uploaden JSON-bestand</div>
                 Wil je een (automatisch gegenereerd) bestand controleren of verder met eerder ingevoerde gegevens? Laad het JSON-bestand hieronder in.<br />
                 <span className="vet">LET OP:</span> als je al gegevens hebt ingevoerd, worden die overschreven met de gegevens uit het JSON-bestand.<br />
-              <input type="file" accept="application/json" onChange={handleFileUpload} className="btn btn-outline-primary" />
+              <input type="file" accept="application/json" onChange={handleFileUpload} className="btn btn-outline-primary" style={{marginTop: '10px'}} />
               <span className="uploadResultaat" id="uploadResultaat"></span>
               </p>
               <hr />

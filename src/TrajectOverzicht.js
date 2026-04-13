@@ -503,8 +503,9 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
       </TableContainer>
       <p className="klein">*: onbekend wil zeggen dat er geen processtap is gevonden die tijdens de rapportageperiode is gestart</p>
 
-      <div style={{ marginTop: '1em' }}>
-        <span className="vet">LET OP:</span> de getoonde totalen zijn gebaseerd op de gegevens die je hebt ingevoerd of geüpload. Nadat je het bestand bij het CBS hebt ingediend, ontvang je een gedetailleerder ‘op-orde-rapport’. Op basis daarvan kun je besluiten de gegevens weer in te trekken voordat ze worden verwerkt. Het CBS publiceert jouw gegevens pas na jouw goedkeuring.
+      <div style={{ marginTop: '1em', backgroundColor: 'white', border: 'solid 1px grey', padding: '3px' }}>
+        <span className="vet">LET OP:</span> de getoonde totalen zijn gebaseerd op de gegevens die je hebt ingevoerd of geüpload. Nadat je het bestand bij het CBS hebt ingediend, ontvang je een gedetailleerder ‘op-orde-rapport’. Op basis daarvan kun je besluiten de gegevens weer in te trekken voordat ze worden verwerkt. Het CBS publiceert jouw gegevens pas na jouw goedkeuring.< br />
+        <span className="vet">NB:</span> De aantallen in het 'op-orde-rapport' kunnen afwijken van de aantallen die hierboven getoond worden. Dat komt mogelijk door definitieverschillen, die nog niet zijn opgelost.
       </div>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
