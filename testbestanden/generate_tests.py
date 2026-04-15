@@ -294,8 +294,8 @@ data = {
         # Levering 1: BSN 900000000 – 900000099
         generate_levering(
             teller=1,
-            elf_proef = False,   # bij meer dan ongeveer 1.500 testgevallen zijn er onvoldoende elfproef getallen om test-BSN's te maken
-            aantal_trajecten=20000
+            elf_proef = True,   # bij meer dan ongeveer 1.500 testgevallen zijn er onvoldoende elfproef getallen om test-BSN's te maken
+            aantal_trajecten=1500
         )
         # Levering 2: overlap BSN 900000050 – 900000149 [even geen 2e levering, werkt toch niet in invoerapp]
 #        generate_levering(
