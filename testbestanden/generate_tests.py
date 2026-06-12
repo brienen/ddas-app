@@ -109,14 +109,14 @@ def bsn_generator(start: int, elf_proef: bool):
 # -------------------------------------------------
 # Client
 # -------------------------------------------------
-def generate_clnt(bsn: str, postcode: str | None = None, huisnr: int | None = None) -> dict:
+def generate_clnt(bsn: str, postcode: str | None = None, huisnr: str | None = None) -> dict:
     geslachten = ["M", "V", "O"]
     return {
         "Burgerservicenummer": bsn,
         "Geboortedatum": generate_geboortedatum(),
         "Geslachtsaanduiding": random.choice(geslachten),
         "Postcode": postcode if postcode is not None else generate_postcode(),
-        "Huisnummer": huisnr if huisnr is not None else random.randint(1, 250)
+        "Huisnummer": huisnr if huisnr is not None else str(random.randint(1, 250))
     }
 
 def generate_client(
