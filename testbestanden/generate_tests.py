@@ -8,7 +8,8 @@ from datetime import date, timedelta
 
 TODAY = date.today()
 
-bsn_start=100000001
+bsn_start=999900000
+aantal = 500
 
 def random_past_date(start_year: int = 2018) -> date:
     """
@@ -30,9 +31,24 @@ def neemmee(kans: int = 5) -> bool:
     """
     return (random.random() * 11 < kans)
 
-# -------------------------------------------------
-# Stukje code om elfproef getallen te genereren
-# -------------------------------------------------
+def generate_geboortedatum() -> str:
+    """
+    Genereer een geboortedatum zodat de client tussen de 18 en 70 is
+    """
+    datum = random_past_date(int(TODAY.year)-65)    # willekeurige datum in afgelopen 65 jaar
+    datum = datum - timedelta(days=6600)            # trek daar 6600 dagen (ongeveer 18 jaar) af
+    return date_str(datum)
+
+def generate_postcode() -> str:
+    """
+    Genereer een postcode in de vorm 1234AB
+    """
+    postcode = random.randint(1000, 9999)     # Maak een getal van 4 cijfers, waarvan de eerste minstens 1 is
+    postcode = str(postcode) + chr(random.randint(ord('A'), ord('Z'))) + chr(random.randint(ord('A'), ord('Z'))) # voeg daar 2 random hoofdletters aan toe
+    return postcode
+
+# BSN bepalen met een paar hulpfuncties
+
 def is_elfproef_bsn(n: int) -> bool:
     s = str(n)
     if len(s) != 9:
@@ -51,6 +67,30 @@ def is_elfproef_bsn(n: int) -> bool:
 
     return total % 11 == 0
 
+def kies_bsn(
+    bsn_gen,
+    eerder_gebruikte_bsns: list[str],
+    verboden_bsns: set[str],
+    hergebruik_kans: float = 0.03
+) -> str:
+    """
+    Geeft meestal een nieuw BSN terug, maar hergebruikt soms een eerder gebruikt BSN.
+    verboden_bsns bevat BSN's die binnen hetzelfde traject al gebruikt zijn.
+    hergebruik_kans=0.03 betekent ongeveer 3% kans op hergebruik.
+    """
+
+    herbruikbare_bsns = [
+        bsn for bsn in eerder_gebruikte_bsns
+        if bsn not in verboden_bsns
+    ]
+
+    if herbruikbare_bsns and random.random() < hergebruik_kans:
+        return random.choice(herbruikbare_bsns)
+
+    nieuw_bsn = next(bsn_gen)
+    eerder_gebruikte_bsns.append(nieuw_bsn)
+    return nieuw_bsn
+
 def next_bsn(n: int, elf_proef: bool) -> int:
     candidate = n
     while True:
@@ -58,40 +98,57 @@ def next_bsn(n: int, elf_proef: bool) -> int:
             return candidate
         candidate += 1
 
+def bsn_generator(start: int, elf_proef: bool):
+    current = start
+
+    while True:
+        bsn = next_bsn(current, elf_proef)
+        yield str(bsn)
+        current = bsn + 1
+
 # -------------------------------------------------
 # Client
 # -------------------------------------------------
-
-def generate_client(i: int, elf_proef: bool) -> dict:
+def generate_clnt(bsn: str) -> dict:
     geslachten = ["M", "V", "O"]
-    bsn=str(next_bsn(bsn_start + ((12 if elf_proef else 1))*i, elf_proef))
+    return {
+        "Burgerservicenummer": bsn,
+        "Geboortedatum": generate_geboortedatum(),
+        "Geslachtsaanduiding": random.choice(geslachten),
+        "Postcode": generate_postcode(),
+        "Huisnummer": str(random.randint(1, 250))
+    }
+
+def generate_client(
+    bsn_gen,
+    eerder_gebruikte_bsns: list[str],
+    hergebruik_kans: float = 0.03
+) -> list[dict]:
+
+    bsn_in_traject = set()
+
+    bsn = kies_bsn(
+        bsn_gen=bsn_gen,
+        eerder_gebruikte_bsns=eerder_gebruikte_bsns,
+        verboden_bsns=bsn_in_traject,
+        hergebruik_kans=hergebruik_kans
+    )
+
+    bsn_in_traject.add(bsn)
+    cl = [generate_clnt(bsn)]
 
     if neemmee(8):
-        cl = [{
-            "Burgerservicenummer": bsn,
-            "Geboortedatum": "1982-05-23",
-            "Geslachtsaanduiding": random.choice(geslachten),
-            "Postcode": "2611 TV",
-            "Huisnummer": "55"
-        }]
-    else:
-        bsn2 = str(next_bsn(bsn_start + ((12 if elf_proef else 1))*random.randint(1, 500), elf_proef))
-        cl = {
-                "Burgerservicenummer": bsn,
-                "Geboortedatum": "1982-05-23",
-                "Geslachtsaanduiding": random.choice(geslachten),
-                "Postcode": "2611 TV",
-                "Huisnummer": "55"
-            }, {
-                "Burgerservicenummer": bsn2,
-                "Geboortedatum": "1982-05-23",
-                "Geslachtsaanduiding": random.choice(geslachten),
-                "Postcode": "2611 TV",
-                "Huisnummer": "55"
-            }
+        bsn = kies_bsn(
+            bsn_gen=bsn_gen,
+            eerder_gebruikte_bsns=eerder_gebruikte_bsns,
+            verboden_bsns=bsn_in_traject,
+            hergebruik_kans=hergebruik_kans
+        )
+
+        bsn_in_traject.add(bsn)
+        cl.append(generate_clnt(bsn))
 
     return cl
-
 
 # -------------------------------------------------
 # Begeleiding
@@ -125,15 +182,23 @@ def generate_begeleiding(start: date) -> list[dict]:
 # Schuldhulptraject
 # -------------------------------------------------
 
-def generate_traject(gemeentecode: str, variant: str, i: int, elf_proef: bool) -> dict:
-    """
-    Genereert één schuldhulptraject volgens een variant.
-    """
-    start = random_past_date(2024)   # startdatum ergens tussen 2024 en nu
+def generate_traject(
+    gemeentecode: str,
+    variant: str,
+    bsn_gen,
+    eerder_gebruikte_bsns: list[str],
+    hergebruik_kans: float = 0.03
+) -> dict:
+
+    start = random_past_date(2024)
 
     traject = {
         "gemeentecode": gemeentecode,
-        "client": generate_client(i, elf_proef),
+        "client": generate_client(
+            bsn_gen=bsn_gen,
+            eerder_gebruikte_bsns=eerder_gebruikte_bsns,
+            hergebruik_kans=hergebruik_kans
+        ),
         "startdatum": date_str(start)
     }
 
@@ -249,10 +314,28 @@ def generate_traject(gemeentecode: str, variant: str, i: int, elf_proef: bool) -
 def generate_levering(
     teller: int,
     elf_proef: bool,
-    aantal_trajecten: int
+    aantal_trajecten: int,
+    hergebruik_kans: float = 0.03
 ) -> dict:
+
     variants = ["minimal", "lopend", "afgerond", "afgerond", "afgerond", "afwijzing", "crisis"]
     gemeentecodes = ["0503", "0599", "0518", "0546"]
+
+    bsn_gen = bsn_generator(bsn_start, elf_proef)
+    eerder_gebruikte_bsns = []
+
+    schuldhulptrajecten = []
+
+    for _ in range(aantal_trajecten):
+        schuldhulptrajecten.append(
+            generate_traject(
+                gemeentecode=random.choice(gemeentecodes),
+                variant=random.choice(variants),
+                bsn_gen=bsn_gen,
+                eerder_gebruikte_bsns=eerder_gebruikte_bsns,
+                hergebruik_kans=hergebruik_kans
+            )
+        )
 
     return {
         "teller": teller,
@@ -260,7 +343,7 @@ def generate_levering(
             "(Statutaire) Naam": f"Testorganisatie {teller}",
             "KvK-nummer": f"{10000000 + teller}",
             "postcode": "1234AB",
-            "gemeentecode": random.choice(variants),
+            "gemeentecode": random.choice(gemeentecodes),
             "contactpersonen": [
                 {
                     "naam": "Test Contact",
@@ -270,15 +353,7 @@ def generate_levering(
                 }
             ]
         },
-        "schuldhulptrajecten": [
-            generate_traject(
-                gemeentecode = random.choice(gemeentecodes),
-                variant=random.choice(variants),
-                i=i,
-                elf_proef=elf_proef
-            )
-            for i in range(aantal_trajecten)
-        ]
+        "schuldhulptrajecten": schuldhulptrajecten
     }
 
 # -------------------------------------------------
@@ -286,16 +361,17 @@ def generate_levering(
 # -------------------------------------------------
 
 data = {
-    "startdatumLevering": "2025-01-01",
+    "startdatumLevering": "2025-07-01",
     "einddatumLevering": "2025-12-31",
-    "aanleverdatumEnTijd": "2026-01-15T10:30:00Z",
+    "aanleverdatumEnTijd": "2026-06-12T10:30:00Z",
     "codeGegevensleverancier": "TEST-LEVERANCIER-001",
     "leveringen": [
         # Levering 1: BSN 900000000 – 900000099
         generate_levering(
             teller=1,
-            elf_proef = True,   # bij meer dan ongeveer 1.500 testgevallen zijn er onvoldoende elfproef getallen om test-BSN's te maken
-            aantal_trajecten=1500
+            elf_proef=True,
+            aantal_trajecten=750,
+            hergebruik_kans=0.03
         )
         # Levering 2: overlap BSN 900000050 – 900000149 [even geen 2e levering, werkt toch niet in invoerapp]
 #        generate_levering(

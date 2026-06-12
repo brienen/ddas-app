@@ -20,6 +20,10 @@ const GlobalStyle = createGlobalStyle`
     font-size: 1.2rem;
     font-weight: 600;
   }
+  h3 {
+    font-size: 1.0rem;
+    font-weight: 600;
+  }
   .bg-light {
     background: rgb(89,55,123,0.1);
   }
@@ -80,6 +84,18 @@ const GlobalStyle = createGlobalStyle`
   .uploadResultaat {
     margin-left: 25px;
     font-weight: 600;
+  }
+  .bsn-zoekresultaten-lijst {
+    max-height: 350px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+  }
+  .traject-dialog-lijst {
+    max-height: 450px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
   }
 `;
 export default GlobalStyle;

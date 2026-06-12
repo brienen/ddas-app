@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TableSortLabel, Paper, Dialog,
-  DialogTitle, DialogContent, List, ListItemButton, ListItemIcon, ListItemText
+  DialogTitle, DialogContent
 } from '@mui/material';
+import { ListGroup, Badge, Button } from 'react-bootstrap';
 import { Typography } from '@mui/material';
 import './MainForm.css';
 
@@ -64,6 +65,54 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
     setDialogTitle(titel);
     setSelectedTrajectList(trajectenLijst);
     setDialogOpen(true);
+  };
+
+  const waardeOfVraagteken = (waarde) => {
+    const tekst = String(waarde ?? '').trim();
+    return tekst.length > 0 ? tekst : '?';
+  };
+
+  const haalClientenUitTraject = (traject) => {
+    const clienten = Array.isArray(traject?.client) ? traject.client : [];
+
+    return clienten
+      .map((client) => {
+        const bsn = String(
+          client?.Burgerservicenummer ??
+          client?.burgerservicenummer ??
+          client?.BSN ??
+          client?.bsn ??
+          ''
+        ).trim();
+
+        if (!bsn) {
+          return null;
+        }
+
+        return {
+          bsn,
+          geboortedatum: waardeOfVraagteken(client?.Geboortedatum),
+          postcode: waardeOfVraagteken(client?.Postcode),
+          huisnummer: waardeOfVraagteken(client?.Huisnummer),
+        };
+      })
+      .filter(Boolean);
+  };
+
+  const maakTrajectLabel = (traject, originalIndex) => {
+    const omschrijving = traject?.omschrijving?.trim();
+
+    if (omschrijving) {
+      return `Traject ${originalIndex + 1}: ${omschrijving}`;
+    }
+
+    return `Traject ${originalIndex + 1}: geen omschrijving`;
+  };
+
+  const gaNaarTraject = (originalIndex) => {
+    setCurrentTrajectIndex(originalIndex);
+    setActiveTab("schuldhulptrajecten");
+    setDialogOpen(false);
   };
 
   const datumInPeriode = (datum) => {
@@ -426,7 +475,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
           </TableBody>
         </Table>
       </TableContainer>
-      <p className="klein">*: actief wil zeggen dat er een processtap tijdens de rapportageperiode is gestart of de cliënt tijdens de rapportageperiode is uitgestroomd</p>
+      <p className="klein">*: actief wil zeggen dat er een processtap tijdens de rapportageperiode gestart is of de cliënt tijdens de rapportageperiode is uitgestroomd</p>
 
       <Typography variant="h8" style={{ marginTop: "1em" }}>
         <br />
@@ -503,60 +552,80 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
       </TableContainer>
       <p className="klein">*: onbekend wil zeggen dat er geen processtap is gevonden die tijdens de rapportageperiode is gestart</p>
 
-      <div style={{ marginTop: '1em', backgroundColor: 'white', border: 'solid 1px grey', padding: '3px' }}>
-        <span className="vet">LET OP:</span> de getoonde totalen zijn gebaseerd op de gegevens die je hebt ingevoerd of geüpload. Nadat je het bestand bij het CBS hebt ingediend, ontvang je een gedetailleerder ‘op-orde-rapport’. Op basis daarvan kun je besluiten de gegevens weer in te trekken voordat ze worden verwerkt. Het CBS publiceert jouw gegevens pas na jouw goedkeuring.< br />
-        <span className="vet">NB:</span> De aantallen in het 'op-orde-rapport' kunnen afwijken van de aantallen die hierboven getoond worden. Dat komt mogelijk door definitieverschillen, die nog niet zijn opgelost.
+      <div style={{ marginTop: '1em', border: 'solid 1px grey', padding: '3px' }}>
+        Zoek je een specifieke cliënt waarvan je het BSN kent? Ga naar het tabblad "Schuldhulptrajecten" en gebruik daar de zoekfunctie.
       </div>
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
+      <div style={{ marginTop: '1em', backgroundColor: 'white', border: 'solid 1px grey', padding: '3px' }}>
+        <span className="vet">LET OP:</span> de getoonde totalen zijn gebaseerd op de gegevens die je hebt ingevoerd of geüpload. Nadat je het bestand bij het CBS hebt ingediend, ontvang je een gedetailleerder ‘op-orde-rapport’. Op basis daarvan kun je besluiten de gegevens weer in te trekken voordat ze worden verwerkt. Het CBS publiceert jouw gegevens pas na jouw goedkeuring!<br />
+      </div>
+
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>{dialogTitle}</DialogTitle>
+
         <DialogContent>
-          <Typography
-            variant="subtitle2"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '4px 16px',
-              backgroundColor: '#f5f5f5',
-              fontWeight: 600
-            }}
-          >
-            <span style={{ width: 15 }} />
-            Gemeentecode | BSN | Omschrijving
-          </Typography>
+          {selectedTrajectList.length === 0 ? (
+            <div className="alert alert-info mb-0">
+              Geen trajecten gevonden.
+            </div>
+          ) : (
+            <ListGroup className="traject-dialog-lijst">
+              {selectedTrajectList.map(({ traject, originalIndex }, i) => {
+                const clienten = haalClientenUitTraject(traject);
 
-          <List>
-            {selectedTrajectList.map(({ traject, originalIndex }, i) => (
-              <ListItemButton
-                key={originalIndex}
-                onClick={() => {
-                  setCurrentTrajectIndex(originalIndex);
-                  setActiveTab("schuldhulptrajecten");
-                  setDialogOpen(false);
-                }}
-              >
-                <ListItemIcon
-                  style={{
-                    minWidth: 25,
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    fontSize: 'small'
-                  }}
-                >
-                  {i + 1}.
-                </ListItemIcon>
+                return (
+                  <ListGroup.Item
+                    key={`${originalIndex}-${i}`}
+                    className="d-flex justify-content-between align-items-start"
+                  >
+                    <div>
+                      <div className="fw-bold">
+                        {i + 1}. {maakTrajectLabel(traject, originalIndex)}
+                      </div>
 
-                <ListItemText
-                  primary={
-                    `${traject.gemeentecode || 'gemeente onbekend*'} | ${traject.client?.[0]?.Burgerservicenummer || 'BSN onbekend*'} | ${traject.omschrijving?.trim() || 'geen omschrijving'}`
-                  }
-                  primaryTypographyProps={{
-                    variant: 'subtitle2'
-                  }}
-                />
-              </ListItemButton>
-            ))}
-          </List>
+                      {clienten.length > 0 ? (
+                        clienten.map((client) => (
+                          <div key={client.bsn} className="mb-1">
+                            <Badge bg="secondary" className="me-1">
+                              {client.bsn}
+                            </Badge>
+                            <span className="small">
+                              ({client.geboortedatum}, {client.postcode} {client.huisnummer})
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="small">
+                          <Badge bg="secondary" className="me-1">
+                            BSN onbekend*
+                          </Badge>
+                          (?, ? ?)
+                        </div>
+                      )}
+
+                      <div className="small mt-1">
+                        Gemeentecode: {traject.gemeentecode || 'gemeente onbekend*'}
+                      </div>
+
+                      {(traject?.startdatum || traject?.einddatum) && (
+                        <div className="small">
+                          Periode: {traject?.startdatum || '?'} t/m {traject?.einddatum || '?'}
+                        </div>
+                      )}
+                    </div>
+
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => gaNaarTraject(originalIndex)}
+                    >
+                      open traject
+                    </Button>
+                  </ListGroup.Item>
+                );
+              })}
+            </ListGroup>
+          )}
         </DialogContent>
       </Dialog>
     </div>

@@ -11,6 +11,7 @@ import { validateJSON } from './validation';
 import { downloadJSON } from './downloadJSON';
 import { SaveShortcut } from './SaveShortcut';
 import TrajectOverzicht from './TrajectOverzicht';
+import BsnZoekfunctie from './BsnZoekfunctie';
 
 import originalSchema from './json_schema_Uitwisselmodel.json';
 import CustomDateFieldRenderer from './CustomDateFieldRenderer';
@@ -568,10 +569,17 @@ function MainForm() {
 
             <Tab eventKey="schuldhulptrajecten" title="Schuldhulptrajecten">
               <div className="p-3 border rounded bg-light">
-                <h2>Schuldhulptrajecten</h2>
-                <p>Voer hier de gegevens in van de trajecten die je in het bestand wilt opnemen. Maak voor iedere cliënt (of twee cliënten als ze gezamenlijk aansprakelijk zijn) een schuldhulptraject aan.</p>
-                <div className="d-flex justify-content-between mt-3">
-                  <Button variant="outline-primary"
+              <h2>Schuldhulptrajecten</h2>
+              <p>Voer hier de gegevens in van de trajecten die je in het bestand wilt opnemen. Maak voor iedere cliënt (of twee cliënten als ze gezamenlijk aansprakelijk zijn) een schuldhulptraject aan.</p>
+
+              <BsnZoekfunctie
+                trajecten={formTrajecten}
+                currentTrajectIndex={currentTrajectIndex}
+                setCurrentTrajectIndex={setCurrentTrajectIndex}
+              />
+
+              <div className="d-flex justify-content-between mt-3">
+              <Button variant="outline-primary"
                     onClick={() => setCurrentTrajectIndex(Math.max(currentTrajectIndex - 1, 0))}
                     disabled={currentTrajectIndex < 1}
                   >
@@ -588,7 +596,7 @@ function MainForm() {
                   </Button>
                 </div>
                 <hr />
-                <div>
+                <div id="schuldhulptraject-detail">
                   <ThemeProvider theme={theme}>
                     <JsonForms
                       schema={schemaTrajecten}
