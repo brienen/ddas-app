@@ -132,8 +132,7 @@ function BsnZoekfunctie({ trajecten = [], currentTrajectIndex, setCurrentTraject
       <h3>Zoeken op BSN</h3>
 
       <p>
-        Vul minimaal de eerste 3 cijfers van een BSN in. Daarna worden BSN’s getoond
-        die in de huidige gegevensset voorkomen.
+        Typ de eerste 3 cijfers van het BSN. Je ziet direct de burgerservicenummers die in deze gegevensset voorkomen.
       </p>
 
       <Form.Group controlId="bsnZoekveld">

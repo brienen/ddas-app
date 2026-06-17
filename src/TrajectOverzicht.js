@@ -4,7 +4,7 @@ import {
   TableHead, TableRow, TableSortLabel, Paper, Dialog,
   DialogTitle, DialogContent
 } from '@mui/material';
-import { ListGroup, Badge, Button } from 'react-bootstrap';
+import { ListGroup, Badge, Button, Form } from 'react-bootstrap';
 import { Typography } from '@mui/material';
 import './MainForm.css';
 
@@ -35,6 +35,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
   const [selectedTrajectList, setSelectedTrajectList] = useState([]);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogZoekterm, setDialogZoekterm] = useState('');
 
   const handleSort = (key) => {
     if (sortKey === key) {
@@ -64,12 +65,17 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
   const openTrajectenDialog = (titel, trajectenLijst) => {
     setDialogTitle(titel);
     setSelectedTrajectList(trajectenLijst);
+    setDialogZoekterm('');
     setDialogOpen(true);
   };
 
   const waardeOfVraagteken = (waarde) => {
     const tekst = String(waarde ?? '').trim();
     return tekst.length > 0 ? tekst : '?';
+  };
+
+  const normaliseerBsn = (waarde) => {
+    return String(waarde ?? '').replace(/\D/g, '');
   };
 
   const haalClientenUitTraject = (traject) => {
@@ -114,6 +120,29 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
     setActiveTab("schuldhulptrajecten");
     setDialogOpen(false);
   };
+
+  const dialogZoektermBsn = normaliseerBsn(dialogZoekterm);
+
+  const dialogBsnOpties = [
+    ...new Set(
+      selectedTrajectList.flatMap(({ traject }) =>
+        haalClientenUitTraject(traject).map((client) => client.bsn)
+      )
+    )
+  ]
+    .filter((bsn) =>
+      dialogZoektermBsn.length >= 3 && bsn.startsWith(dialogZoektermBsn)
+    )
+    .sort((a, b) => a.localeCompare(b));
+
+  const gefilterdeSelectedTrajectList =
+    dialogZoektermBsn.length >= 3
+      ? selectedTrajectList.filter(({ traject }) =>
+          haalClientenUitTraject(traject).some((client) =>
+            client.bsn.startsWith(dialogZoektermBsn)
+          )
+        )
+      : selectedTrajectList;
 
   const datumInPeriode = (datum) => {
     if (!datum) return false;
@@ -426,7 +455,7 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
                     {...(gegevens.trajectenAantal > 0 && {
                       onClick: () =>
                         openTrajectenDialog(
-                          `Trajecten in gemeente ${gemeente} (klik op traject om daarheen te gaan)`,
+                          `Trajecten in gemeente ${gemeente}`,
                           alleTrajecten
                         ),
                       title: "Klik om de bijbehorende trajecten te bekijken",
@@ -569,8 +598,47 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
               Geen trajecten gevonden.
             </div>
           ) : (
-            <ListGroup className="traject-dialog-lijst">
-              {selectedTrajectList.map(({ traject, originalIndex }, i) => {
+            <>
+              <div className="mb-3">
+                <Form.Group controlId="dialogBsnZoekveld">
+                  <Form.Label>Zoeken binnen deze lijst op BSN</Form.Label>
+                  <Form.Control
+                    type="search"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="Vul minimaal 3 cijfers in"
+                    value={dialogZoekterm}
+                    list="dialog-bsn-autocomplete-opties"
+                    onChange={(event) => setDialogZoekterm(event.target.value)}
+                  />
+
+                  <datalist id="dialog-bsn-autocomplete-opties">
+                    {dialogBsnOpties.map((bsn) => (
+                      <option key={bsn} value={bsn} />
+                    ))}
+                  </datalist>
+                </Form.Group>
+
+                {dialogZoektermBsn.length > 0 && dialogZoektermBsn.length < 3 && (
+                  <div className="text-muted small mt-1">
+                    Typ de eerste 3 cijfers van het BSN. Je ziet direct de burgerservicenummers die in deze gegevensset voorkomen.
+                  </div>
+                )}
+
+                {dialogZoektermBsn.length >= 3 && (
+                  <div className="text-muted small mt-1">
+                    {gefilterdeSelectedTrajectList.length} van de {selectedTrajectList.length} trajecten gevonden.
+                  </div>
+                )}
+              </div>
+
+              {gefilterdeSelectedTrajectList.length === 0 ? (
+                <div className="alert alert-info mb-0">
+                  Geen trajecten gevonden met een BSN dat begint met {dialogZoektermBsn}.
+                </div>
+              ) : (
+                <ListGroup className="traject-dialog-lijst">
+                  {gefilterdeSelectedTrajectList.map(({ traject, originalIndex }, i) => {
                 const clienten = haalClientenUitTraject(traject);
 
                 return (
@@ -619,17 +687,19 @@ const TrajectOverzicht = ({ trajecten, formAlgemeen, setCurrentTrajectIndex, set
                       size="sm"
                       onClick={() => gaNaarTraject(originalIndex)}
                     >
-                      open traject
+                      ga naar traject
                     </Button>
                   </ListGroup.Item>
                 );
               })}
             </ListGroup>
           )}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
+        </>
+      )}
+      </DialogContent>
+    </Dialog>
+  </div>
+);
 };
 
 export default TrajectOverzicht;
