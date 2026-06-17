@@ -141,7 +141,7 @@ function BsnZoekfunctie({ trajecten = [], currentTrajectIndex, setCurrentTraject
           type="search"
           inputMode="numeric"
           pattern="[0-9]*"
-          placeholder="Bijvoorbeeld 123456794"
+          placeholder="Vul minimaal 3 cijfers in"
           value={zoekterm}
           list="bsn-autocomplete-opties"
           onChange={(event) => setZoekterm(event.target.value)}
